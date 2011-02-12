@@ -26,39 +26,54 @@ Schedule = function(element) {
 	this.topAxisLabelElement = null;
 	this.blocks = [];
 	this.adjacentStep = 10;
-}
+};
 
 Schedule.prototype.render = function() {
-	// empty all elements
+	this.emptyAllElements_();
+	this.resize_();
+	this.createFrame_();
+	this.createRowHeaders_();
+	this.createBlocks_();
+	
+};
+
+/** @private */
+Schedule.prototype.emptyAllElements_ = function() {
 	this.element.find().each(function(x) {
 		x.parentElement.removeChild(x);
 	});
-	
-	// resize the thing
+};
+
+/** @private */
+Schedule.prototype.resize_ = function() {
 	this.element.css({
 		width: px(this.leftWidth + this.columns.length * this.columnWidth),
 		height: px(this.topHeight + this.rowLabels.length * this.rowHeight)
 	});
-	
-	// create header elements
+};
+
+/** @private */
+Schedule.prototype.createFrame_ = function() {
 	this.leftElement = $(document.createElement("div"))
-		.addClass("schedule_headerleft")
-		.css({ top: px(this.topHeight), width: px(this.leftWidth) })
+	.addClass("schedule_headerleft")
+	.css({ top: px(this.topHeight), width: px(this.leftWidth) });
 	this.topElement = $(document.createElement("div"))
-		.addClass("schedule_headertop")
-		.css({ height: px(this.topHeight), left: px(this.leftWidth) });
+	.addClass("schedule_headertop")
+	.css({ height: px(this.topHeight), left: px(this.leftWidth) });
 	this.topAxisLabelElement = $(document.createElement("div"))
-		.addClass("schedule_topaxislabel")
-		.text(this.topAxisTitle)
-		.appendTo(this.topElement);
+	.addClass("schedule_topaxislabel")
+	.text(this.topAxisTitle)
+	.appendTo(this.topElement);
 	this.gridElement = $(document.createElement("div"))
-		.addClass("schedule_grid")
-		.css({ "left": px(this.leftWidth), "top": px(this.topHeight) });
+	.addClass("schedule_grid")
+	.css({ "left": px(this.leftWidth), "top": px(this.topHeight) });
 	this.element.append(this.leftElement);
 	this.element.append(this.topElement);
 	this.element.append(this.gridElement);
-	
-	// add row headers
+};
+
+/** @private */
+Schedule.prototype.createRowHeaders_ = function() {
 	for(var rowIndex = 0; rowIndex < this.rowLabels.length; rowIndex += 1) {
 		var rowHeader = $(document.createElement("div"))
 			.addClass("schedule_leftheadercell")
@@ -66,7 +81,10 @@ Schedule.prototype.render = function() {
 			.text((rowIndex < this.rowLabels.length) ? this.rowLabels[rowIndex] : '')
 			.appendTo(this.leftElement);
 	}
-	
+};
+
+/** @private */
+Schedule.prototype.createBlocks_ = function() {
 	var columnMap = {};
 	
 	// add columns
@@ -191,7 +209,7 @@ Schedule.prototype.render = function() {
 		block.element = blockElement;
 		this.gridElement.append(blockElement);
 	}
-}
+};
 
 function blockClick(evt) {
 	location.href = evt.data.block.link;
@@ -229,6 +247,6 @@ Column = function(id, label, link) {
 	this.element = null;
 	this.visible = true;
 	this.currentIndex = -1;
-}
+};
 
 })(jQuery);
