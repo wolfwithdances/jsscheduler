@@ -10,12 +10,9 @@ function px(value) {
 }
 
 /** @constructor */
-Schedule = function(element) {
+Schedule = function(element, options) {
 	this.element = $(element).first();
-	this.columnWidth = 110;
-	this.rowHeight = 30;
-	this.leftWidth = 90; // const
-	this.topHeight = 40; // const
+	this.options = $.extend({}, options, this.defaultOptions);
 	this.cellMargin = 1;
 	this.rowLabels = [];
 	this.columns = [];
@@ -26,6 +23,13 @@ Schedule = function(element) {
 	this.topAxisLabelElement = null;
 	this.blocks = [];
 	this.adjacentStep = 10;
+};
+
+Schedule.prototype.defaultOptions = {
+	rowHeight: 30,
+	columnWidth: 110,
+	leftWidth: 90,
+	topHeight: 40
 };
 
 Schedule.prototype.render = function() {
@@ -46,26 +50,35 @@ Schedule.prototype.emptyAllElements_ = function() {
 /** @private */
 Schedule.prototype.resize_ = function() {
 	this.element.css({
-		width: px(this.leftWidth + this.columns.length * this.columnWidth),
-		height: px(this.topHeight + this.rowLabels.length * this.rowHeight)
+		width: px(this.options.leftWidth + this.columns.length * this.options.columnWidth),
+		height: px(this.options.topHeight + this.rowLabels.length * this.options.rowHeight)
 	});
 };
 
 /** @private */
 Schedule.prototype.createFrame_ = function() {
 	this.leftElement = $(document.createElement("div"))
-	.addClass("schedule_headerleft")
-	.css({ top: px(this.topHeight), width: px(this.leftWidth) });
+		.addClass("schedule_headerleft")
+		.css({
+			top: px(this.options.topHeight),
+			width: px(this.options.leftWidth)
+		});
 	this.topElement = $(document.createElement("div"))
-	.addClass("schedule_headertop")
-	.css({ height: px(this.topHeight), left: px(this.leftWidth) });
+		.addClass("schedule_headertop")
+		.css({
+			height: px(this.options.topHeight),
+			left: px(this.options.leftWidth)
+		});
 	this.topAxisLabelElement = $(document.createElement("div"))
-	.addClass("schedule_topaxislabel")
-	.text(this.topAxisTitle)
-	.appendTo(this.topElement);
+		.addClass("schedule_topaxislabel")
+		.text(this.topAxisTitle)
+		.appendTo(this.topElement);
 	this.gridElement = $(document.createElement("div"))
-	.addClass("schedule_grid")
-	.css({ "left": px(this.leftWidth), "top": px(this.topHeight) });
+		.addClass("schedule_grid")
+		.css({
+			left: px(this.options.leftWidth),
+			top: px(this.options.topHeight)
+		});
 	this.element.append(this.leftElement);
 	this.element.append(this.topElement);
 	this.element.append(this.gridElement);
@@ -76,7 +89,10 @@ Schedule.prototype.createRowHeaders_ = function() {
 	for(var rowIndex = 0; rowIndex < this.rowLabels.length; rowIndex += 1) {
 		var rowHeader = $(document.createElement("div"))
 			.addClass("schedule_leftheadercell")
-			.css({ "top": px(rowIndex * this.rowHeight), "height": px(this.rowHeight) })
+			.css({
+				top: px(rowIndex * this.options.rowHeight),
+				height: px(this.options.rowHeight)
+			})
 			.text((rowIndex < this.rowLabels.length) ? this.rowLabels[rowIndex] : '')
 			.appendTo(this.leftElement);
 	}
@@ -93,7 +109,10 @@ Schedule.prototype.createBlocks_ = function() {
 		columnMap[column.id] = colIndex;
 		var columnHeader = $(document.createElement("div"))
 			.addClass("schedule_topheadercell")
-			.css({ left: px(colIndex * this.columnWidth), width: px(this.columnWidth)});
+			.css({
+				left: px(colIndex * this.options.columnWidth),
+				width: px(this.options.columnWidth)
+			});
 		if(!column.link) {
 			columnHeader.text(column.label);
 		} else {
@@ -174,10 +193,10 @@ Schedule.prototype.createBlocks_ = function() {
 		var blockElement = $(document.createElement("div"))
 			.addClass("schedule_gridcell")
 			.css({
-				left: px(this.columnWidth * columnMap[block.columnId] + block.leftOffset),
-				top: px(this.rowHeight * block.row),
-				width: px(this.columnWidth - this.cellMargin - block.leftOffset - block.rightOffset),
-				height: px(block.height * this.rowHeight - this.cellMargin) });
+				left: px(this.options.columnWidth * columnMap[block.columnId] + block.leftOffset),
+				top: px(this.options.rowHeight * block.row),
+				width: px(this.options.columnWidth - this.cellMargin - block.leftOffset - block.rightOffset),
+				height: px(block.height * this.options.rowHeight - this.cellMargin) });
 		if(block.height > 1) {
 			$(document.createElement("div"))
 				.addClass("label")
