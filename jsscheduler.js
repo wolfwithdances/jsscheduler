@@ -1,4 +1,8 @@
-
+/*
+ * JSScheduler (c) 2011 Jeff Bowman
+ * Released as part of Wepwawet under Apache license 2.0
+ * Written for JQuery 1.5 - Originally coded for FurEvent
+ */
 (function($) {
 
 function px(value) {
