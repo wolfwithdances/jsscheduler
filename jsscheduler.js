@@ -82,7 +82,7 @@ Schedule.prototype.createFrame_ = function() {
 
 /** @private */
 Schedule.prototype.createRowHeaders_ = function() {
-	for(var rowIndex = 0; rowIndex < this.rowLabels.length; rowIndex += 1) {
+	for (var rowIndex = 0; rowIndex < this.rowLabels.length; rowIndex += 1) {
 		var rowHeader = $(document.createElement("div"))
 			.addClass("schedule_leftheadercell")
 			.css({
@@ -99,7 +99,7 @@ Schedule.prototype.createBlocks_ = function() {
 	var columnMap = {};
 	
 	// add columns
-	for(var colIndex = 0; colIndex < this.columns.length; colIndex += 1) {
+	for (var colIndex = 0; colIndex < this.columns.length; colIndex += 1) {
 		var column = this.columns[colIndex];
 		column.currentIndex = colIndex;
 		columnMap[column.id] = colIndex;
@@ -109,7 +109,7 @@ Schedule.prototype.createBlocks_ = function() {
 				left: px(colIndex * this.options.columnWidth),
 				width: px(this.options.columnWidth)
 			});
-		if(!column.link) {
+		if (!column.link) {
 			columnHeader.text(column.label);
 		} else {
 			var columnAnchor = $(document.createElement("a"))
@@ -122,48 +122,55 @@ Schedule.prototype.createBlocks_ = function() {
 		
 		var colBlocks = [];
 		var rowData = [];
-		for(var i = 0, len = this.rowLabels.length; i < len; i += 1) {
+		for (var i = 0, len = this.rowLabels.length; i < len; i += 1) {
 			rowData[i] = null;
 		}
 		for (var blockIndex in this.blocks) {
 			var block = this.blocks[blockIndex];
-			if(block.columnId == column.id)
+			if (block.columnId == column.id) {
 				colBlocks.push(block);
-			else
+			} else {
 				continue;
+			}
 			
 			block.subColumnId = -1;
 			
-			for(var i = block.row, j = block.row + block.height; i < j; i += 1) {
-				if(rowData[i] == null)
+			for (var i = block.row, j = block.row + block.height; i < j; i += 1) {
+				if(rowData[i] == null) {
 					rowData[i] = [block];
-				else
+				} else {
 					rowData[i].push(block);
+				}
 			}
 		}
 		
 		var maxCrowding = 0;
 		
-		for(var i = 0; i < this.rowLabels.length; i += 1) {
-			if(rowData[i] == null) continue;
+		for (var i = 0; i < this.rowLabels.length; i += 1) {
+			if (rowData[i] == null) {
+				continue;
+			}
 			for (var rowBlockIndex in rowData[i]) {
 				var rowBlock = rowData[i][rowBlockIndex];
-				if(rowBlock.subColumnId == -1) {
+				if (rowBlock.subColumnId == -1) {
 					var proposedSubColumn = 0;
-					while(true) {
+					while (true) {
 						var success = true;
-						for(var j = 0; j < rowData[i].length; j += 1) {
-							if(rowData[i][j].subColumnId == proposedSubColumn) {
+						for (var j = 0; j < rowData[i].length; j += 1) {
+							if (rowData[i][j].subColumnId == proposedSubColumn) {
 								success = false;
 								break;
 							}
 						}
-						if(success)
+						if (success) {
 							break;
+						}
 						proposedSubColumn += 1;
 					}
 					rowBlock.subColumnId = proposedSubColumn;
-					if(proposedSubColumn > maxCrowding) maxCrowding = proposedSubColumn;
+					if (proposedSubColumn > maxCrowding) {
+						maxCrowding = proposedSubColumn;
+					}
 				}
 			}
 		}
@@ -176,15 +183,13 @@ Schedule.prototype.createBlocks_ = function() {
 	}
 	
 	// add blocks
-	for(var blockIndex = 0, len = this.blocks.length; blockIndex < len; blockIndex += 1) {
+	for (var blockIndex = 0, len = this.blocks.length; blockIndex < len; blockIndex += 1) {
 		/** @type {Block} */
 		var block = this.blocks[blockIndex];
 		
-		if(!block.visible)
+		if (columnMap[block.columnId] === undefined) {
 			continue;
-		
-		if(columnMap[block.columnId] === undefined)
-			continue;
+		}
 		
 		var blockElement = $(document.createElement("div"))
 			.addClass("schedule_gridcell")
@@ -193,9 +198,10 @@ Schedule.prototype.createBlocks_ = function() {
 				left: px(this.options.columnWidth * columnMap[block.columnId] + block.leftOffset),
 				top: px(this.options.rowHeight * block.row),
 				width: px(this.options.columnWidth - this.options.cellMargin - block.leftOffset - block.rightOffset),
-				height: px(block.height * this.options.rowHeight - this.options.cellMargin)
+				height: px(block.height * this.options.rowHeight - this.options.cellMargin),
+				display: block.options.visible ? "block" : "none"
 			});
-		if(block.height > 1) {
+		if (block.height > 1) {
 			$(document.createElement("div"))
 				.addClass("label")
 				.text(block.label)
@@ -216,10 +222,10 @@ Schedule.prototype.createBlocks_ = function() {
 				.addClass("main")
 				.appendTo(blockElement);
 		}
-		if(!block.enabled)
+		if (!block.options.enabled) {
 			block.addClass("disabled");
-		
-		if(block.link) {
+		}
+		if (block.link) {
 			blockElement.click({ block: block }, function(evt) {
 				location.href = evt.data.block.link;
 			});
@@ -255,9 +261,8 @@ Block = function(label, main, row, columnId, height, link, options) {
 	this.height = height;
 	this.link = link;
 	this.options = $.extend({}, this.defaultOptions, options);
+	
 	this.element = null;
-	this.enabled = true;
-	this.visible = true;
 	this.leftOffset = 0;
 	this.rightOffset = 0;
 	this.subColumnId = 0;
@@ -265,7 +270,9 @@ Block = function(label, main, row, columnId, height, link, options) {
 
 Block.prototype.defaultOptions = {
 	borderColor: "#009",
-	interiorColor: "#fff"
+	interiorColor: "#fff",
+	enabled: true,
+	visible: true
 };
 
 /**
