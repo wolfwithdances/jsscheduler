@@ -8,15 +8,14 @@
 /** @constructor */
 Schedule = function(element, options) {
 	this.element = $(element).first();
-	this.options = $.extend({}, options, this.defaultOptions);
+	this.options = $.extend({}, this.defaultOptions, options);
 	this.rowLabels = [];
 	this.columns = [];
-	this.topAxisTitle = "Tracks";
+	this.blocks = [];
 	this.leftElement = null;
 	this.topElement = null;
 	this.gridElement = null;
 	this.topAxisLabelElement = null;
-	this.blocks = [];
 };
 
 Schedule.prototype.defaultOptions = {
@@ -25,7 +24,8 @@ Schedule.prototype.defaultOptions = {
 	leftWidth: 90,
 	topHeight: 40,
 	cellMargin: 1,
-	adjacentStep: 10
+	adjacentStep: 10,
+	topAxisTitle: "Tracks"
 };
 
 Schedule.prototype.render = function() {
@@ -67,7 +67,7 @@ Schedule.prototype.createFrame_ = function() {
 		});
 	this.topAxisLabelElement = $(document.createElement("div"))
 		.addClass("schedule_topaxislabel")
-		.text(this.topAxisTitle)
+		.text(this.options.topAxisTitle)
 		.appendTo(this.topElement);
 	this.gridElement = $(document.createElement("div"))
 		.addClass("schedule_grid")

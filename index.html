@@ -9,8 +9,9 @@
 <h1>JSScheduler</h1>
 <div id="schedule1" class="schedule_container"></div>
 <script type="text/javascript">
-	schedule = new Schedule("#schedule1");
-	schedule.topAxisTitle = "Tracks";
+	schedule = new Schedule("#schedule1", {
+		topAxisTitle: "Schedule Tracks"
+	});
 	schedule.columns = [
 		new Column(3, "Art and Lit", "/mff2009/track/3"),
 		new Column(6, "Fandom", "/mff2009/track/6"),
