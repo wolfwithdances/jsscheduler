@@ -85,7 +85,7 @@ Schedule.prototype.render = function() {
 		this.topElement.append(columnHeader);
 		
 		var colBlocks = [];
-		var rowData = Array();
+		var rowData = [];
 		for(var i = 0, len = this.rowLabels.length; i < len; i += 1) {
 			rowData[i] = null;
 		}
@@ -94,7 +94,7 @@ Schedule.prototype.render = function() {
 			if(block.columnId == column.id)
 				colBlocks.push(block);
 			else
-				break;
+				continue;
 			
 			block.subColumnId = -1;
 			
