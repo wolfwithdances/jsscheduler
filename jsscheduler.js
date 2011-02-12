@@ -1,9 +1,13 @@
+
+(function($) {
+
 function px(value) {
 	return String(Math.round(value)) + "px";
 }
 
+/** @constructor */
 Schedule = function(element) {
-	this.element = $(element);
+	this.element = element;
 	this.columnWidth = 110;
 	this.rowHeight = 30;
 	this.leftWidth = 90; // const
@@ -21,30 +25,36 @@ Schedule = function(element) {
 }
 
 Schedule.prototype.render = function() {
-	$A(this.element.descendants()).each(function(x) {
+	$(this.element).find().each(function(x) {
 		x.parentElement.removeChild(x);
 	});
-	this.element.setStyle({ width: px(this.leftWidth + this.columns.length * this.columnWidth),
-	                        height: px(this.topHeight + this.rowLabels.length * this.rowHeight)});
+	$(this.element).css({
+		width: px(this.leftWidth + this.columns.length * this.columnWidth),
+		height: px(this.topHeight + this.rowLabels.length * this.rowHeight)
+	});
 	
 	// create header elements
-	this.leftElement = new Element("div", {"class": "schedule_headerleft"})
-		.setStyle({ "top": px(this.topHeight), "width": px(this.leftWidth) });
-	this.topElement = new Element("div", {"class": "schedule_headertop"})
-		.setStyle({ "height": px(this.topHeight), "left": px(this.leftWidth) });
-	this.topAxisLabelElement = new Element("div", {"class": "schedule_topaxislabel"})
-		.update(this.topAxisTitle);
-	this.gridElement = new Element("div", {"class": "schedule_grid"})
-		.setStyle({ "left": px(this.leftWidth), "top": px(this.topHeight) });
-	
-	this.topElement.appendChild(this.topAxisLabelElement);
+	this.leftElement = $(document.createElement("div"))
+		.addClass("schedule_headerleft")
+		.css({ top: px(this.topHeight), width: px(this.leftWidth) });
+	this.topElement = $(document.createElement("div"))
+		.addClass("schedule_headertop")
+		.css({ height: px(this.topHeight), left: px(this.leftWidth) });
+	this.topAxisLabelElement = $(document.createElement("div"))
+		.addClass("schedule_topaxislabel")
+		.text(this.topAxisTitle)
+		.appendTo(this.topElement);
+	this.gridElement = $(document.createElement("div"))
+		.addClass("schedule_grid")
+		.css({ "left": px(this.leftWidth), "top": px(this.topHeight) });
 	
 	// add row headers
 	for(var rowIndex = 0, len = this.rowLabels.length; rowIndex < len; rowIndex += 1) {
-		var rowHeader = new Element("div", {"class": "schedule_leftheadercell"})
-			.setStyle({ "top": px(rowIndex * this.rowHeight), "height": px(this.rowHeight) })
-			.update((rowIndex < this.rowLabels.length) ? this.rowLabels[rowIndex] : '');
-		this.leftElement.appendChild(rowHeader);
+		var rowHeader = $(document.createElement("div"))
+			.addClass("schedule_leftheadercell")
+			.css({ "top": px(rowIndex * this.rowHeight), "height": px(this.rowHeight) })
+			.text((rowIndex < this.rowLabels.length) ? this.rowLabels[rowIndex] : '');
+		this.leftElement.append(rowHeader);
 	}
 	
 	var columnMap = {};
@@ -54,24 +64,27 @@ Schedule.prototype.render = function() {
 		var column = this.columns[colIndex];
 		column.currentIndex = colIndex;
 		columnMap[column.id] = colIndex;
-		var columnHeader = new Element("div", {"class": "schedule_topheadercell"})
-			.setStyle({ "left": px(colIndex * this.columnWidth), "width": px(this.columnWidth)});
+		var columnHeader = $(document.createElement("div"))
+			.addClass("schedule_topheadercell")
+			.css({ left: px(colIndex * this.columnWidth), width: px(this.columnWidth)});
 		if(!column.link) {
-			columnHeader.update(column.label);
+			columnHeader.text(column.label);
 		} else {
-			var columnAnchor = new Element("a", {"href": column.link})
-				.update(column.label);
-			columnHeader.appendChild(columnAnchor);
+			var columnAnchor = $(document.createElement("a"))
+				.attr("href", column.link)
+				.text(column.label)
+				.appendTo(columnHeader);
 		}
 		column.element = columnHeader;
-		this.topElement.appendChild(columnHeader);
+		this.topElement.append(columnHeader);
 		
 		var colBlocks = [];
 		var rowData = Array();
 		for(var i = 0, len = this.rowLabels.length; i < len; i += 1) {
 			rowData[i] = null;
 		}
-		this.blocks.each(function(block) {
+		for (var blockIndex in this.blocks) {
+			var block = this.blocks[blockIndex];
 			if(block.columnId == column.id)
 				colBlocks.push(block);
 			else
@@ -85,13 +98,14 @@ Schedule.prototype.render = function() {
 				else
 					rowData[i].push(block);
 			}
-		});
+		}
 		
 		var maxCrowding = 0;
 		
 		for(var i = 0; i < this.rowLabels.length; i += 1) {
 			if(rowData[i] == null) continue;
-			rowData[i].each(function(rowBlock) {
+			for (var rowBlockIndex in rowData[i]) {
+				var rowBlock = rowData[i][rowBlockIndex];
 				if(rowBlock.subColumnId == -1) {
 					var proposedSubColumn = 0;
 					while(true) {
@@ -109,14 +123,15 @@ Schedule.prototype.render = function() {
 					rowBlock.subColumnId = proposedSubColumn;
 					if(proposedSubColumn > maxCrowding) maxCrowding = proposedSubColumn;
 				}
-			});
+			}
 		}
 		
 		adjStep = this.adjacentStep;
-		colBlocks.each(function(block) {
+		for (var blockIndex in colBlocks) {
+			var block = colBlocks[blockIndex];
 			block.leftOffset = block.subColumnId * adjStep;
 			block.rightOffset = (maxCrowding - block.subColumnId) * adjStep;
-		});
+		}
 	}
 	
 	// add blocks
@@ -129,33 +144,47 @@ Schedule.prototype.render = function() {
 		if(columnMap[block.columnId] === undefined)
 			continue;
 		
-		var blockElement = new Element("div", {"class": "schedule_gridcell"})
-			.setStyle({ "left": px(this.columnWidth * columnMap[block.columnId] + block.leftOffset), "top": px(this.rowHeight * block.row),
-			            "width": px(this.columnWidth - this.cellMargin - block.leftOffset - block.rightOffset), "height": px(block.height * this.rowHeight - this.cellMargin) });
+		var blockElement = $(document.createElement("div"))
+			.addClass("schedule_gridcell")
+			.css({
+				left: px(this.columnWidth * columnMap[block.columnId] + block.leftOffset),
+				top: px(this.rowHeight * block.row),
+				width: px(this.columnWidth - this.cellMargin - block.leftOffset - block.rightOffset),
+				height: px(block.height * this.rowHeight - this.cellMargin) });
 		if(block.height > 1) {
-			blockElement.appendChild(new Element("div", {"class": "label"}).update(block.label));
-			blockElement.appendChild(new Element("div", {"class": "main"}).update(block.main));
+			$(document.createElement("div"))
+				.addClass("label")
+				.text(block.label)
+				.appendTo(blockElement);
+			$(document.createElement("div"))
+				.addClass("main")
+				.text(block.main)
+				.appendTo(blockElement);
 		} else {
-			blockElement.appendChild(new Element("div", {"class": "label"}).update(block.main));
-			blockElement.appendChild(new Element("div", {"class": "main"}));
+			$(document.createElement("div"))
+				.addClass("label")
+				.text(block.main)
+				.appendTo(blockElement);
+			$(document.createElement("div"))
+				.addClass("main")
+				.appendTo(blockElement);
 		}
 		if(block.link) {
-			Event.observe(blockElement, "click", blockClick.bindAsEventListener(block));
+			blockElement.click(blockClick);
 		}
 		if(!block.enabled)
-			block.addClassName("disabled");
+			block.addClass("disabled");
 		
-		Event.observe(blockElement, "mouseenter", blockEnter.bindAsEventListener(blockElement));
-		Event.observe(blockElement, "mouseleave", blockExit.bindAsEventListener(blockElement));
+		blockElement.hover(blockEnter, blockExit);
 		
 		block.element = blockElement;
-		this.gridElement.appendChild(blockElement);
+		this.gridElement.append(blockElement);
 	}
 	
 	// final additions
-	this.element.appendChild(this.leftElement);
-	this.element.appendChild(this.topElement);
-	this.element.appendChild(this.gridElement);
+	this.element.append(this.leftElement);
+	this.element.append(this.topElement);
+	this.element.append(this.gridElement);
 }
 
 function blockClick(evt) {
@@ -170,6 +199,7 @@ function blockExit(evt) {
 	this.removeClassName("hover");
 }
 
+/** @constructor */
 Block = function(label, main, row, columnId, height, link) { 
 	this.label = label;
 	this.main = main;
@@ -185,6 +215,7 @@ Block = function(label, main, row, columnId, height, link) {
 	this.subColumnId = 0;
 };
 
+/** @constructor */
 Column = function(id, label, link) {
 	this.id = id;
 	this.label = label;
@@ -193,3 +224,5 @@ Column = function(id, label, link) {
 	this.visible = true;
 	this.currentIndex = -1;
 }
+
+})(jQuery);

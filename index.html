@@ -1,167 +1,37 @@
 <html>
 <head>
-  <title>Development - JSScheduler</title>
-  <script type="text/javascript" src="jquery/jquery-1.5.js"></script>
+	<title>Development - JSScheduler</title>
+	<script type="text/javascript" src="jquery/jquery-1.5.js"></script>
+	<script type="text/javascript" src="jsscheduler.js"></script>
+	<link rel="stylesheet" href="jsscheduler.css" type="text/css" />
 </head>
 <body>
 <h1>JSScheduler</h1>
-<div id="schedule1" class="schedule_container">
-</div>
+<div id="schedule1" class="schedule_container"></div>
 <script type="text/javascript">
 	schedule = new Schedule("schedule1");
-
-	
-		schedule.topAxisTitle = "Tracks";
-		schedule.columns = [
-  			new Column(3, "Art and Lit", "/mff2009/track/3"),new Column(6, "Fandom", "/mff2009/track/6"),new Column(1, "Fursuit", "/mff2009/track/1"),new Column(7, "Gaming", "/mff2009/track/7"),new Column(8, "Main Events / Other", "/mff2009/track/8"),new Column(4, "Nature", "/mff2009/track/4"),new Column(9, "Puppets", "/mff2009/track/9"),new Column(2, "Spirituality", "/mff2009/track/2"),new Column(5, "Video", "/mff2009/track/5")
-  			
-   		];
-	
-	schedule.rowLabels = [
-		
-			
-				"Thu 6:30PM"
-			
-			,
-		
-			
-				"7:00PM"
-			
-			,
-		
-			
-				"7:30PM"
-			
-			,
-		
-			
-				"8:00PM"
-			
-			,
-		
-			
-				"8:30PM"
-			
-			,
-		
-			
-				"9:00PM"
-			
-			,
-		
-			
-				"9:30PM"
-			
-			,
-		
-			
-				"10:00PM"
-			
-			,
-		
-			
-				"10:30PM"
-			
-			,
-		
-			
-				"11:00PM"
-			
-			,
-		
-			
-				"11:30PM"
-			
-			,
-		
-			
-				"Fri 12:00AM"
-			
-			,
-		
-			
-				"12:30AM"
-			
-			,
-		
-			
-				"1:00AM"
-			
-			,
-		
-			
-				"1:30AM"
-			
-			,
-		
-			
-				"2:00AM"
-			
-			,
-		
-			
-				"2:30AM"
-			
-			
-		
+	schedule.topAxisTitle = "Tracks";
+	schedule.columns = [
+		new Column(3, "Art and Lit", "/mff2009/track/3"),
+		new Column(6, "Fandom", "/mff2009/track/6"),
+		new Column(1, "Fursuit", "/mff2009/track/1"),
+		new Column(7, "Gaming", "/mff2009/track/7"),
+		new Column(8, "Main Events / Other", "/mff2009/track/8"),
+		new Column(4, "Nature", "/mff2009/track/4"),
+		new Column(9, "Puppets", "/mff2009/track/9"),
+		new Column(2, "Spirituality", "/mff2009/track/2"),
+		new Column(5, "Video", "/mff2009/track/5")
 	];
+	
+
+	schedule.rowLabels = [ "Thu 6:30PM","7:00PM","7:30PM","8:00PM","8:30PM","9:00PM","9:30PM",
+			"10:00PM","10:30PM","11:00PM","11:30PM","Fri 12:00AM","12:30AM","1:00AM","1:30AM",
+			"2:00AM","2:30AM"];
 	schedule.blocks = [
-		
-			
-				
-					new Block(
-						"7pm-2am",
-						"Video",
-						1,
-						5,
-						14,
-						"/mff2009/block/3"
-					)
-					
-				
-				,
-			
-		
-			
-				
-					new Block(
-						"7pm-12am",
-						"Registration and Thursday Night Mixer",
-						1,
-						8,
-						10,
-						"/mff2009/block/1"
-					)
-					
-				
-				,
-			
-		
-			
-				
-					new Block(
-						"8pm-11pm",
-						"Dance",
-						3,
-						8,
-						6,
-						"/mff2009/block/2"
-					)
-					
-				
-				,
-			
-		
-			
-				
-					new Block(
-						"8pm-11pm",
-						"Video Gaming",
-						3,
-						7,
-						6,
-						"/mff2009/block/4"
-					)
+		new Block("7pm-2am", "Video", 1, 5, 14, "/mff2009/block/3"),
+		new Block("7pm-12am", "Registration and Thursday Night Mixer", 1, 8, 10, "/mff2009/block/1"),
+		new Block("8pm-11pm", "Dance", 3, 8, 6, "/mff2009/block/2"),
+		new Block("8pm-11pm", "Video Gaming", 3, 7, 6, "/mff2009/block/4")
 	];
 	schedule.render();
 </script>
