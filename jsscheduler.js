@@ -235,7 +235,16 @@ Schedule.prototype.createBlocks_ = function() {
 	}
 };
 
-/** @constructor */
+/**
+ * @param label {String} The label that should go at the top of the block.
+ * @param main {String} The text that should go inside the block.
+ * @param row {Number} The first row that should contain the block.
+ * @param columnId {Number} The column ID (not column index) that should
+ *     contain the block.
+ * @param height {Number} The total number or rows that the block should span.
+ * @param link {String} URL to which the block should link.
+ * @constructor
+ */
 Block = function(label, main, row, columnId, height, link) { 
 	this.label = label;
 	this.main = main;
@@ -251,7 +260,14 @@ Block = function(label, main, row, columnId, height, link) {
 	this.subColumnId = 0;
 };
 
-/** @constructor */
+/**
+ * Creates a Column object.
+ * 
+ * @param id {Any} An ID used to map columns to locations.
+ * @param label {String} A label.
+ * @param link {String=} A URL to which the column header should link. 
+ * @constructor
+ */
 Column = function(id, label, link) {
 	this.id = id;
 	this.label = label;
