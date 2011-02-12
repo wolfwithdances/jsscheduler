@@ -34,7 +34,6 @@ Schedule.prototype.render = function() {
 	this.createFrame_();
 	this.createRowHeaders_();
 	this.createBlocks_();
-	
 };
 
 /** @private */
@@ -197,31 +196,25 @@ Schedule.prototype.createBlocks_ = function() {
 				.addClass("main")
 				.appendTo(blockElement);
 		}
-		if(block.link) {
-			blockElement.click({ block: block }, blockClick);
-		}
 		if(!block.enabled)
 			block.addClass("disabled");
 		
-		blockElement.mouseenter({ blockElement: blockElement }, blockEnter);
-		blockElement.mouseleave({ blockElement: blockElement }, blockExit);
+		if(block.link) {
+			blockElement.click({ block: block }, function(evt) {
+				location.href = evt.data.block.link;
+			});
+		}
+		blockElement.mouseenter({ blockElement: blockElement }, function(evt) {
+			evt.data.blockElement.addClass("hover");
+		});
+		blockElement.mouseleave({ blockElement: blockElement }, function(evt) {
+			evt.data.blockElement.removeClass("hover");
+		});
 		
 		block.element = blockElement;
 		this.gridElement.append(blockElement);
 	}
 };
-
-function blockClick(evt) {
-	location.href = evt.data.block.link;
-}
-
-function blockEnter(evt) {
-	evt.data.blockElement.addClass("hover");
-}
-
-function blockExit(evt) {
-	evt.data.blockElement.removeClass("hover");
-}
 
 /** @constructor */
 Block = function(label, main, row, columnId, height, link) { 
