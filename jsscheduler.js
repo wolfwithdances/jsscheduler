@@ -176,12 +176,13 @@ Schedule.prototype.render = function() {
 				.appendTo(blockElement);
 		}
 		if(block.link) {
-			blockElement.click(blockClick);
+			blockElement.click({ block: block }, blockClick);
 		}
 		if(!block.enabled)
 			block.addClass("disabled");
 		
-		blockElement.hover(blockEnter, blockExit);
+		blockElement.mouseenter({ blockElement: blockElement }, blockEnter);
+		blockElement.mouseleave({ blockElement: blockElement }, blockExit);
 		
 		block.element = blockElement;
 		this.gridElement.append(blockElement);
@@ -189,15 +190,15 @@ Schedule.prototype.render = function() {
 }
 
 function blockClick(evt) {
-	location.href = this.link;
+	location.href = evt.data.block.link;
 }
 
 function blockEnter(evt) {
-	this.addClassName("hover");
+	evt.data.blockElement.addClass("hover");
 }
 
 function blockExit(evt) {
-	this.removeClassName("hover");
+	evt.data.blockElement.removeClass("hover");
 }
 
 /** @constructor */
