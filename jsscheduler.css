@@ -1,12 +1,110 @@
-div.schedule_container { position: relative; background-color: #ccc; margin: auto }
-div.schedule_grid { position: absolute; bottom: 0px; right: 0px }
-div.schedule_headertop { position: absolute; top: 0px; right: 0px; background-color: #ddd }
-div.schedule_topheadercell { position: absolute; bottom: 0px; text-align: center; padding: 3px; font-size: 9pt; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
-div.schedule_topaxislabel { position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; text-transform: uppercase; font-size: 8pt; font-weight: bold; padding: 3px; text-align: center }
-div.schedule_headerleft { position: absolute; left: 0px; bottom: 0px; background-color: #ddd }
-div.schedule_leftheadercell { position: absolute; text-align: right; padding: 3px; left: 0px; right: 0px; font-size: 9pt }
-div.schedule_gridcell { position: absolute; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; font-size: 8pt; color: #fff; font-weight: bold; background-color: #900; cursor: pointer; z-index: 0 }
-div.schedule_gridcell div.label { position: absolute; top: 0; left: 2px; right: 2px; bottom: 15px; overflow: hidden; cursor: pointer; white-space: nowrap }
-div.schedule_gridcell div.main { position: absolute; top: 15px; left: 2px; bottom: 2px; right: 2px; -moz-border-radius: 0 0 4px 4px; -webkit-border-bottom-left-radius: 4px; -webkit-border-bottom-right-radius: 4px; border-radius: 0 0 4px 4px; background-color: #ffffff; padding: 0 2px; color: #000; font-size: 8pt; font-weight: normal; cursor: pointer; overflow: hidden; text-overflow: ellipsis }
-div.schedule_gridcell.hover { z-index: 1 }
-div.schedule_gridcell.hover div.main { text-decoration: underline }
+div.schedule_container {
+	position: relative;
+	background-color: #ccc;
+	margin: auto
+}
+
+div.schedule_grid {
+	position: absolute;
+	bottom: 0px;
+	right: 0px
+}
+
+div.schedule_headertop {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	background-color: #ddd
+}
+
+div.schedule_topheadercell {
+	position: absolute;
+	bottom: 0px;
+	text-align: center;
+	padding: 3px;
+	font-size: 9pt;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis
+}
+
+div.schedule_topaxislabel {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	text-transform: uppercase;
+	font-size: 8pt;
+	font-weight: bold;
+	padding: 3px;
+	text-align: center
+}
+
+div.schedule_headerleft {
+	position: absolute;
+	left: 0px;
+	bottom: 0px;
+	background-color: #ddd
+}
+
+div.schedule_leftheadercell {
+	position: absolute;
+	text-align: right;
+	padding: 3px;
+	left: 0px;
+	right: 0px;
+	font-size: 9pt
+}
+
+div.schedule_gridcell {
+	position: absolute;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	font-size: 8pt;
+	color: #fff;
+	font-weight: bold;
+	background-color: #900;
+	cursor: pointer;
+	z-index: 0
+}
+
+div.schedule_gridcell div.label {
+	position: absolute;
+	top: 0;
+	left: 2px;
+	right: 2px;
+	bottom: 15px;
+	overflow: hidden;
+	cursor: pointer;
+	white-space: nowrap
+}
+
+div.schedule_gridcell div.main {
+	position: absolute;
+	top: 15px;
+	left: 2px;
+	bottom: 2px;
+	right: 2px;
+	-moz-border-radius: 0 0 4px 4px;
+	-webkit-border-bottom-left-radius: 4px;
+	-webkit-border-bottom-right-radius: 4px;
+	border-radius: 0 0 4px 4px;
+	background-color: #ffffff;
+	padding: 0 2px;
+	color: #000;
+	font-size: 8pt;
+	font-weight: normal;
+	cursor: pointer;
+	overflow: hidden;
+	text-overflow: ellipsis
+}
+
+div.schedule_gridcell.hover {
+	z-index: 1
+}
+
+div.schedule_gridcell.hover div.main {
+	text-decoration: underline
+}
