@@ -177,6 +177,7 @@ Schedule.prototype.createBlocks_ = function() {
 	
 	// add blocks
 	for(var blockIndex = 0, len = this.blocks.length; blockIndex < len; blockIndex += 1) {
+		/** @type {Block} */
 		var block = this.blocks[blockIndex];
 		
 		if(!block.visible)
@@ -188,10 +189,12 @@ Schedule.prototype.createBlocks_ = function() {
 		var blockElement = $(document.createElement("div"))
 			.addClass("schedule_gridcell")
 			.css({
+				backgroundColor: block.options.borderColor,
 				left: px(this.options.columnWidth * columnMap[block.columnId] + block.leftOffset),
 				top: px(this.options.rowHeight * block.row),
 				width: px(this.options.columnWidth - this.options.cellMargin - block.leftOffset - block.rightOffset),
-				height: px(block.height * this.options.rowHeight - this.options.cellMargin) });
+				height: px(block.height * this.options.rowHeight - this.options.cellMargin)
+			});
 		if(block.height > 1) {
 			$(document.createElement("div"))
 				.addClass("label")
@@ -199,6 +202,9 @@ Schedule.prototype.createBlocks_ = function() {
 				.appendTo(blockElement);
 			$(document.createElement("div"))
 				.addClass("main")
+				.css({
+					backgroundColor: block.options.interiorColor
+				})
 				.text(block.main)
 				.appendTo(blockElement);
 		} else {
@@ -238,16 +244,18 @@ Schedule.prototype.createBlocks_ = function() {
  *     contain the block.
  * @param {Number} height The total number or rows that the block should span.
  * @param {String} link URL to which the block should link.
+ * @param {Object} options A hash of options.
  * @constructor
  */
-Block = function(label, main, row, columnId, height, link) { 
+Block = function(label, main, row, columnId, height, link, options) { 
 	this.label = label;
 	this.main = main;
 	this.row = row;
 	this.columnId = columnId;
 	this.height = height;
-	this.element = null;
 	this.link = link;
+	this.options = $.extend({}, this.defaultOptions, options);
+	this.element = null;
 	this.enabled = true;
 	this.visible = true;
 	this.leftOffset = 0;
@@ -255,21 +263,31 @@ Block = function(label, main, row, columnId, height, link) {
 	this.subColumnId = 0;
 };
 
+Block.prototype.defaultOptions = {
+	borderColor: "#009",
+	interiorColor: "#fff"
+};
+
 /**
  * Creates a Column object.
  * 
  * @param {any} id An ID used to map columns to locations.
  * @param {String} label Column title.
- * @param {String=} link URL to which the column header should link. 
+ * @param {String=} link URL to which the column header should link.
+ * @param {Object} options A hash of options. 
  * @constructor
  */
-Column = function(id, label, link) {
+Column = function(id, label, link, options) {
 	this.id = id;
 	this.label = label;
 	this.link = link;
+	this.options = $.extend({}, this.defaultOptions, this.options);
 	this.element = null;
 	this.visible = true;
 	this.currentIndex = -1;
+};
+
+Column.prototype.defaultOptions = {
 };
 
 function px(value) {

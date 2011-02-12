@@ -29,7 +29,10 @@
 			"10:00PM","10:30PM","11:00PM","11:30PM","Fri 12:00AM","12:30AM","1:00AM","1:30AM",
 			"2:00AM","2:30AM"];
 	schedule.blocks = [
-		new Block("7pm-2am", "Video", 1, 5, 14, "/mff2009/block/3"),
+		new Block("7pm-2am", "Video", 1, 5, 14, "/mff2009/block/3", {
+			borderColor: "#f00",
+			interiorColor: "#f99"
+		}),
 		new Block("7pm-12am", "Registration and Thursday Night Mixer", 1, 8, 10, "/mff2009/block/1"),
 		new Block("8pm-11pm", "Dance", 3, 8, 6, "/mff2009/block/2"),
 		new Block("8pm-11pm", "Video Gaming", 3, 7, 6, "/mff2009/block/4")
