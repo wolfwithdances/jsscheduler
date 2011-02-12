@@ -5,15 +5,10 @@
  */
 (function($) {
 
-function px(value) {
-	return String(Math.round(value)) + "px";
-}
-
 /** @constructor */
 Schedule = function(element, options) {
 	this.element = $(element).first();
 	this.options = $.extend({}, options, this.defaultOptions);
-	this.cellMargin = 1;
 	this.rowLabels = [];
 	this.columns = [];
 	this.topAxisTitle = "Tracks";
@@ -22,14 +17,15 @@ Schedule = function(element, options) {
 	this.gridElement = null;
 	this.topAxisLabelElement = null;
 	this.blocks = [];
-	this.adjacentStep = 10;
 };
 
 Schedule.prototype.defaultOptions = {
 	rowHeight: 30,
 	columnWidth: 110,
 	leftWidth: 90,
-	topHeight: 40
+	topHeight: 40,
+	cellMargin: 1,
+	adjacentStep: 10
 };
 
 Schedule.prototype.render = function() {
@@ -172,11 +168,10 @@ Schedule.prototype.createBlocks_ = function() {
 			}
 		}
 		
-		adjStep = this.adjacentStep;
 		for (var blockIndex in colBlocks) {
 			var block = colBlocks[blockIndex];
-			block.leftOffset = block.subColumnId * adjStep;
-			block.rightOffset = (maxCrowding - block.subColumnId) * adjStep;
+			block.leftOffset = block.subColumnId * this.options.adjacentStep;
+			block.rightOffset = (maxCrowding - block.subColumnId) * this.options.adjacentStep;
 		}
 	}
 	
@@ -195,8 +190,8 @@ Schedule.prototype.createBlocks_ = function() {
 			.css({
 				left: px(this.options.columnWidth * columnMap[block.columnId] + block.leftOffset),
 				top: px(this.options.rowHeight * block.row),
-				width: px(this.options.columnWidth - this.cellMargin - block.leftOffset - block.rightOffset),
-				height: px(block.height * this.options.rowHeight - this.cellMargin) });
+				width: px(this.options.columnWidth - this.options.cellMargin - block.leftOffset - block.rightOffset),
+				height: px(block.height * this.options.rowHeight - this.options.cellMargin) });
 		if(block.height > 1) {
 			$(document.createElement("div"))
 				.addClass("label")
@@ -236,13 +231,13 @@ Schedule.prototype.createBlocks_ = function() {
 };
 
 /**
- * @param label {String} The label that should go at the top of the block.
- * @param main {String} The text that should go inside the block.
- * @param row {Number} The first row that should contain the block.
- * @param columnId {Number} The column ID (not column index) that should
+ * @param {String} label The label that should go at the top of the block.
+ * @param {String} main The text that should go inside the block.
+ * @param {Number} row The first row that should contain the block.
+ * @param {Number} columnId The column ID (not column index) that should
  *     contain the block.
- * @param height {Number} The total number or rows that the block should span.
- * @param link {String} URL to which the block should link.
+ * @param {Number} height The total number or rows that the block should span.
+ * @param {String} link URL to which the block should link.
  * @constructor
  */
 Block = function(label, main, row, columnId, height, link) { 
@@ -263,9 +258,9 @@ Block = function(label, main, row, columnId, height, link) {
 /**
  * Creates a Column object.
  * 
- * @param id {Any} An ID used to map columns to locations.
- * @param label {String} A label.
- * @param link {String=} A URL to which the column header should link. 
+ * @param {any} id An ID used to map columns to locations.
+ * @param {String} label Column title.
+ * @param {String=} link URL to which the column header should link. 
  * @constructor
  */
 Column = function(id, label, link) {
@@ -276,5 +271,9 @@ Column = function(id, label, link) {
 	this.visible = true;
 	this.currentIndex = -1;
 };
+
+function px(value) {
+	return String(Math.round(value)) + "px";
+}
 
 })(jQuery);
