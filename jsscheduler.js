@@ -7,7 +7,7 @@ function px(value) {
 
 /** @constructor */
 Schedule = function(element) {
-	this.element = element;
+	this.element = $(element).first();
 	this.columnWidth = 110;
 	this.rowHeight = 30;
 	this.leftWidth = 90; // const
