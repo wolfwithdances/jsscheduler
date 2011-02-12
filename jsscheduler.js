@@ -25,10 +25,13 @@ Schedule = function(element) {
 }
 
 Schedule.prototype.render = function() {
-	$(this.element).find().each(function(x) {
+	// empty all elements
+	this.element.find().each(function(x) {
 		x.parentElement.removeChild(x);
 	});
-	$(this.element).css({
+	
+	// resize the thing
+	this.element.css({
 		width: px(this.leftWidth + this.columns.length * this.columnWidth),
 		height: px(this.topHeight + this.rowLabels.length * this.rowHeight)
 	});
@@ -36,7 +39,7 @@ Schedule.prototype.render = function() {
 	// create header elements
 	this.leftElement = $(document.createElement("div"))
 		.addClass("schedule_headerleft")
-		.css({ top: px(this.topHeight), width: px(this.leftWidth) });
+		.css({ top: px(this.topHeight), width: px(this.leftWidth) })
 	this.topElement = $(document.createElement("div"))
 		.addClass("schedule_headertop")
 		.css({ height: px(this.topHeight), left: px(this.leftWidth) });
@@ -47,14 +50,17 @@ Schedule.prototype.render = function() {
 	this.gridElement = $(document.createElement("div"))
 		.addClass("schedule_grid")
 		.css({ "left": px(this.leftWidth), "top": px(this.topHeight) });
+	this.element.append(this.leftElement);
+	this.element.append(this.topElement);
+	this.element.append(this.gridElement);
 	
 	// add row headers
-	for(var rowIndex = 0, len = this.rowLabels.length; rowIndex < len; rowIndex += 1) {
+	for(var rowIndex = 0; rowIndex < this.rowLabels.length; rowIndex += 1) {
 		var rowHeader = $(document.createElement("div"))
 			.addClass("schedule_leftheadercell")
 			.css({ "top": px(rowIndex * this.rowHeight), "height": px(this.rowHeight) })
-			.text((rowIndex < this.rowLabels.length) ? this.rowLabels[rowIndex] : '');
-		this.leftElement.append(rowHeader);
+			.text((rowIndex < this.rowLabels.length) ? this.rowLabels[rowIndex] : '')
+			.appendTo(this.leftElement);
 	}
 	
 	var columnMap = {};
@@ -88,7 +94,7 @@ Schedule.prototype.render = function() {
 			if(block.columnId == column.id)
 				colBlocks.push(block);
 			else
-				return;
+				break;
 			
 			block.subColumnId = -1;
 			
@@ -180,11 +186,6 @@ Schedule.prototype.render = function() {
 		block.element = blockElement;
 		this.gridElement.append(blockElement);
 	}
-	
-	// final additions
-	this.element.append(this.leftElement);
-	this.element.append(this.topElement);
-	this.element.append(this.gridElement);
 }
 
 function blockClick(evt) {
