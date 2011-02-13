@@ -104,69 +104,12 @@ Schedule.prototype.createBlocks_ = function() {
 	// add columns
 	for (var colIndex = 0; colIndex < this.columns_.length; colIndex += 1) {
 		var column = this.columns_[colIndex];
-		var columnHeader = $(document.createElement("div"))
-			.addClass("schedule_topheadercell")
-			.css({
-				left: px(colIndex * this.options_.columnWidth),
-				width: px(this.options_.columnWidth)
-			});
-		if (!column.link_) {
-			columnHeader.text(column.label_);
-		} else {
-			var columnAnchor = $(document.createElement("a"))
-				.attr("href", column.link_)
-				.text(column.label_)
-				.appendTo(columnHeader);
-		}
-		column.element_ = columnHeader;
-		this.topElement_.append(columnHeader);
+		column.createHeader(this, colIndex);
+		column.updateLayout(this);
 		
 		var colBlocks = column.blocks_;
-		var rowData = [];
-		for (var i = 0, len = this.rowLabels_.length; i < len; i += 1) {
-			rowData[i] = [];
-		}
 		for (var blockIndex in colBlocks) {
 			var block = colBlocks[blockIndex];
-			
-			block.subColumnId_ = -1;
-			
-			for (var i = block.row_, j = block.row_ + block.height_; i < j; i += 1) {
-				rowData[i].push(block);
-			}
-		}
-		
-		var maxCrowding = 0;
-		
-		for (var i = 0; i < this.rowLabels_.length; i += 1) {
-			for (var rowBlockIndex in rowData[i]) {
-				var rowBlock = rowData[i][rowBlockIndex];
-				if (rowBlock.subColumnId_ == -1) {
-					var proposedSubColumn = 0;
-					while (true) {
-						var success = true;
-						for (var j = 0; j < rowData[i].length; j += 1) {
-							if (rowData[i][j].subColumnId_ == proposedSubColumn) {
-								success = false;
-								break;
-							}
-						}
-						if (success) {
-							break;
-						}
-						proposedSubColumn += 1;
-					}
-					rowBlock.subColumnId_ = proposedSubColumn;
-					maxCrowding = Math.max(maxCrowding, proposedSubColumn);
-				}
-			}
-		}
-		
-		for (var blockIndex in colBlocks) {
-			var block = colBlocks[blockIndex];
-			block.leftOffset_ = block.subColumnId_ * this.options_.adjacentStep;
-			block.rightOffset_ = (maxCrowding - block.subColumnId_) * this.options_.adjacentStep;
-			
 			var blockElement = $(document.createElement("div"))
 				.addClass("schedule_gridcell")
 				.addClass(block.options_.cssClass)
@@ -243,6 +186,76 @@ Column = function(id, label, link, options) {
 };
 
 Column.prototype.defaultOptions = {
+};
+
+Column.prototype.createHeader = function(schedule, colIndex) {
+	if (this.element_) {
+		this.element_.parentElement.removeChild(this.element_);
+	}
+	
+	var columnHeader = $(document.createElement("div"))
+		.addClass("schedule_topheadercell")
+		.css({
+			left: px(colIndex * schedule.options_.columnWidth),
+			width: px(schedule.options_.columnWidth)
+		});
+	if (!this.link_) {
+		columnHeader.text(this.label_);
+	} else {
+		var columnAnchor = $(document.createElement("a"))
+			.attr("href", this.link_)
+			.text(this.label_)
+			.appendTo(columnHeader);
+	}
+	this.element_ = columnHeader;
+	schedule.topElement_.append(columnHeader);
+};
+
+Column.prototype.updateLayout = function(schedule) {
+	var rowData = [];
+	for (var i = 0, len = schedule.rowLabels_.length; i < len; i += 1) {
+		rowData[i] = [];
+	}
+	for (var blockIndex in this.blocks_) {
+		var block = this.blocks_[blockIndex];
+		
+		block.subColumnId_ = -1;
+		for (var i = block.row_, j = block.row_ + block.height_; i < j; i += 1) {
+			rowData[i].push(block);
+		}
+	}
+	
+	var maxCrowding = 0;
+	
+	for (var i = 0; i < schedule.rowLabels_.length; i += 1) {
+		for (var rowBlockIndex in rowData[i]) {
+			var rowBlock = rowData[i][rowBlockIndex];
+			if (rowBlock.subColumnId_ == -1) {
+				var proposedSubColumn = 0;
+				while (true) {
+					var success = true;
+					for (var j = 0; j < rowData[i].length; j += 1) {
+						if (rowData[i][j].subColumnId_ == proposedSubColumn) {
+							success = false;
+							break;
+						}
+					}
+					if (success) {
+						break;
+					}
+					proposedSubColumn += 1;
+				}
+				rowBlock.subColumnId_ = proposedSubColumn;
+				maxCrowding = Math.max(maxCrowding, proposedSubColumn);
+			}
+		}
+	}
+	
+	for (var blockIndex in this.blocks_) {
+		var block = this.blocks_[blockIndex];
+		block.leftOffset_ = block.subColumnId_ * schedule.options_.adjacentStep;
+		block.rightOffset_ = (maxCrowding - block.subColumnId_) * schedule.options_.adjacentStep;
+	}
 };
 
 /**
