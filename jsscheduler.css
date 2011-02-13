@@ -74,7 +74,7 @@ div.schedule_gridcell {
 	z-index: 0;
 }
 
-div.schedule_gridcell div.label {
+div.schedule_gridcell div.schedule_cellcaption {
 	position: absolute;
 	top: 0;
 	left: 2px;
@@ -85,7 +85,7 @@ div.schedule_gridcell div.label {
 	white-space: nowrap;
 }
 
-div.schedule_gridcell div.main {
+div.schedule_gridcell div.schedule_cellbody {
 	position: absolute;
 	top: 15px;
 	left: 2px;
@@ -107,6 +107,6 @@ div.schedule_gridcell.hover {
 	z-index: 1;
 }
 
-div.schedule_gridcell.hover div.main {
+div.schedule_gridcell.hover div.schedule_cellbody {
 	text-decoration: underline;
 }

@@ -205,11 +205,11 @@ Schedule.prototype.createBlocks_ = function() {
 			});
 		if (block.height > 1) {
 			$(document.createElement("div"))
-				.addClass("label")
+				.addClass("schedule_cellcaption")
 				.text(block.label)
 				.appendTo(blockElement);
 			$(document.createElement("div"))
-				.addClass("main")
+				.addClass("schedule_cellbody")
 				.css({
 					backgroundColor: block.options.interiorColor,
 					color: block.options.textColor
