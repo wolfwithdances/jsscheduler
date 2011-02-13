@@ -15,7 +15,7 @@ Schedule = function(element, options) {
 	/** @type {Element} */
 	this.element_ = $(element).first();
 	/** @type {Object} */
-	this.options_ = $.extend({}, this.defaultOptions, options);
+	this.options = $.extend({}, this.defaultOptions, options);
 	/** @type {Array.<String>} */
 	this.rowLabels_ = [];
 	/** @type {Array.<Column>} */
@@ -57,8 +57,8 @@ Schedule.prototype.emptyAllElements_ = function() {
 /** @private */
 Schedule.prototype.resize_ = function() {
 	this.element_.css({
-		width: px(this.options_.leftWidth + this.getVisibleColumns().length * this.options_.columnWidth),
-		height: px(this.options_.topHeight + this.rowLabels_.length * this.options_.rowHeight)
+		width: px(this.options.leftWidth + this.getVisibleColumns().length * this.options.columnWidth),
+		height: px(this.options.topHeight + this.rowLabels_.length * this.options.rowHeight)
 	});
 };
 
@@ -67,24 +67,24 @@ Schedule.prototype.createFrame_ = function() {
 	this.leftElement_ = $(document.createElement("div"))
 		.addClass("schedule_headerleft")
 		.css({
-			top: px(this.options_.topHeight),
-			width: px(this.options_.leftWidth)
+			top: px(this.options.topHeight),
+			width: px(this.options.leftWidth)
 		});
 	this.topElement_ = $(document.createElement("div"))
 		.addClass("schedule_headertop")
 		.css({
-			height: px(this.options_.topHeight),
-			left: px(this.options_.leftWidth)
+			height: px(this.options.topHeight),
+			left: px(this.options.leftWidth)
 		});
 	this.topAxisLabelElement_ = $(document.createElement("div"))
 		.addClass("schedule_topaxislabel")
-		.text(this.options_.topAxisTitle)
+		.text(this.options.topAxisTitle)
 		.appendTo(this.topElement_);
 	this.gridElement_ = $(document.createElement("div"))
 		.addClass("schedule_grid")
 		.css({
-			left: px(this.options_.leftWidth),
-			top: px(this.options_.topHeight)
+			left: px(this.options.leftWidth),
+			top: px(this.options.topHeight)
 		});
 	this.element_.append(this.leftElement_);
 	this.element_.append(this.topElement_);
@@ -97,8 +97,8 @@ Schedule.prototype.createRowHeaders_ = function() {
 		var rowHeader = $(document.createElement("div"))
 			.addClass("schedule_leftheadercell")
 			.css({
-				top: px(rowIndex * this.options_.rowHeight),
-				height: px(this.options_.rowHeight)
+				top: px(rowIndex * this.options.rowHeight),
+				height: px(this.options.rowHeight)
 			})
 			.text((rowIndex < this.rowLabels_.length) ? this.rowLabels_[rowIndex] : '')
 			.appendTo(this.leftElement_);
@@ -107,6 +107,7 @@ Schedule.prototype.createRowHeaders_ = function() {
 
 /** @private */
 Schedule.prototype.createColumns_ = function() {
+	/** @type {Array.<Column>} */
 	var visibleColumns = this.getVisibleColumns();
 	for (var index = 0; index < visibleColumns.length; index += 1) {
 		var column = visibleColumns[index];
@@ -116,12 +117,15 @@ Schedule.prototype.createColumns_ = function() {
 	}
 };
 
-/** @private */
+/**
+ * @private
+ * @returns {Array.<Column>}
+ */
 Schedule.prototype.getVisibleColumns = function() {
 	var visibleColumns = [];
 	for (var index = 0; index < this.columns_.length; index += 1) {
 		var column = this.columns_[index];
-		if (column.options_.visible) {
+		if (column.options.visible) {
 			visibleColumns.push(column);
 		}
 	}
@@ -142,7 +146,7 @@ Column = function(label, link, options) {
 	/** @type {String} */
 	this.link_ = link;
 	/** @type {Object} */
-	this.options_ = $.extend({}, this.defaultOptions, this.options);
+	this.options = $.extend({}, this.defaultOptions, this.options);
 	/** @type {Array.<Block>} */
 	this.blocks_ = [];
 	/** @type {Element} */
@@ -172,8 +176,8 @@ Column.prototype.createHeader_ = function() {
 	var columnHeader = $(document.createElement("div"))
 		.addClass("schedule_topheadercell")
 		.css({
-			left: px(this.index_ * this.schedule_.options_.columnWidth),
-			width: px(this.schedule_.options_.columnWidth)
+			left: px(this.index_ * this.schedule_.options.columnWidth),
+			width: px(this.schedule_.options.columnWidth)
 		});
 	if (!this.link_) {
 		columnHeader.text(this.label_);
@@ -189,11 +193,13 @@ Column.prototype.createHeader_ = function() {
 
 /** @private */
 Column.prototype.updateLayout_ = function() {
+	/** @type {Array.<Array.<Block>>} */
 	var rowData = [];
 	for (var i = 0, len = this.schedule_.rowLabels_.length; i < len; i += 1) {
 		rowData[i] = [];
 	}
 	for (var blockIndex in this.blocks_) {
+		/** @type {Block} */
 		var block = this.blocks_[blockIndex];
 		
 		block.subColumnIndex_ = -1;
@@ -230,8 +236,8 @@ Column.prototype.updateLayout_ = function() {
 	
 	for (var blockIndex in this.blocks_) {
 		var block = this.blocks_[blockIndex];
-		block.leftOffset_ = block.subColumnIndex_ * this.schedule_.options_.adjacentStep;
-		block.rightOffset_ = (maxSubColumnIndex - block.subColumnIndex_) * this.schedule_.options_.adjacentStep;
+		block.leftOffset_ = block.subColumnIndex_ * this.schedule_.options.adjacentStep;
+		block.rightOffset_ = (maxSubColumnIndex - block.subColumnIndex_) * this.schedule_.options.adjacentStep;
 	}
 };
 
@@ -266,7 +272,7 @@ Block = function(label, main, row, height, link, options) {
 	/** @type {String} */
 	this.link_ = link;
 	/** @type {Object} */
-	this.options_ = $.extend({}, this.defaultOptions, options);
+	this.options = $.extend({}, this.defaultOptions, options);
 	
 	/** @type {Element} */
 	this.element_ = null;
@@ -298,15 +304,15 @@ Block.prototype.render = function() {
 	}
 	var blockElement = $(document.createElement("div"))
 		.addClass("schedule_gridcell")
-		.addClass(this.options_.cssClass)
+		.addClass(this.options.cssClass)
 		.css({
-			backgroundColor: this.options_.borderColor,
-			color: this.options_.labelTextColor,
-			left: px(this.schedule_.options_.columnWidth * this.column_.index_ + this.leftOffset_),
-			top: px(schedule.options_.rowHeight * this.row_),
-			width: px(schedule.options_.columnWidth - schedule.options_.cellMargin - this.leftOffset_ - this.rightOffset_),
-			height: px(this.height_ * schedule.options_.rowHeight - schedule.options_.cellMargin),
-			display: this.options_.visible ? "block" : "none"
+			backgroundColor: this.options.borderColor,
+			color: this.options.labelTextColor,
+			left: px(this.schedule_.options.columnWidth * this.column_.index_ + this.leftOffset_),
+			top: px(schedule.options.rowHeight * this.row_),
+			width: px(schedule.options.columnWidth - schedule.options.cellMargin - this.leftOffset_ - this.rightOffset_),
+			height: px(this.height_ * schedule.options.rowHeight - schedule.options.cellMargin),
+			display: this.options.visible ? "block" : "none"
 		});
 	if (this.height_ > 1) {
 		$(document.createElement("div"))
@@ -316,8 +322,8 @@ Block.prototype.render = function() {
 		$(document.createElement("div"))
 			.addClass("schedule_cellbody")
 			.css({
-				backgroundColor: this.options_.interiorColor,
-				color: this.options_.textColor
+				backgroundColor: this.options.interiorColor,
+				color: this.options.textColor
 			})
 			.text(this.main_)
 			.appendTo(blockElement);
@@ -330,7 +336,7 @@ Block.prototype.render = function() {
 			.addClass("main")
 			.appendTo(blockElement);
 	}
-	if (!this.options_.enabled) {
+	if (!this.options.enabled) {
 		blockElement.addClass("disabled");
 	}
 	if (this.link_) {
@@ -349,6 +355,9 @@ Block.prototype.render = function() {
 	this.schedule_.gridElement_.append(blockElement);
 };
 
+/**
+ * Returns the passed value as an integer number of pixels, suffixed with "px".
+ */
 function px(value) {
 	return String(Math.round(value)) + "px";
 }
