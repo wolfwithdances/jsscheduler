@@ -51,15 +51,13 @@ Schedule.prototype.render = function() {
 
 /** @private */
 Schedule.prototype.emptyAllElements_ = function() {
-	this.element_.find().each(function(x) {
-		x.parentElement.removeChild(x);
-	});
+	this.element_.empty();
 };
 
 /** @private */
 Schedule.prototype.resize_ = function() {
 	this.element_.css({
-		width: px(this.options_.leftWidth + this.columns_.length * this.options_.columnWidth),
+		width: px(this.options_.leftWidth + this.getVisibleColumns().length * this.options_.columnWidth),
 		height: px(this.options_.topHeight + this.rowLabels_.length * this.options_.rowHeight)
 	});
 };
@@ -109,12 +107,25 @@ Schedule.prototype.createRowHeaders_ = function() {
 
 /** @private */
 Schedule.prototype.createColumns_ = function() {
-	for (var index = 0; index < this.columns_.length; index += 1) {
-		var column = this.columns_[index];
+	var visibleColumns = this.getVisibleColumns();
+	for (var index = 0; index < visibleColumns.length; index += 1) {
+		var column = visibleColumns[index];
 		column.schedule_ = this;
 		column.index_ = index;
 		column.render();
 	}
+};
+
+/** @private */
+Schedule.prototype.getVisibleColumns = function() {
+	var visibleColumns = [];
+	for (var index = 0; index < this.columns_.length; index += 1) {
+		var column = this.columns_[index];
+		if (column.options_.visible) {
+			visibleColumns.push(column);
+		}
+	}
+	return visibleColumns;
 };
 
 /**
@@ -136,8 +147,6 @@ Column = function(label, link, options) {
 	this.blocks_ = [];
 	/** @type {Element} */
 	this.element_ = null;
-	/** @type {Boolean} */
-	this.visible_ = true;
 	/** @type {Schedule} */
 	this.schedule_ = null;
 	/** @type {Number} */
@@ -145,6 +154,7 @@ Column = function(label, link, options) {
 };
 
 Column.prototype.defaultOptions = {
+	visible: true
 };
 
 Column.prototype.render = function() {
@@ -155,7 +165,7 @@ Column.prototype.render = function() {
 
 /** @private */
 Column.prototype.createHeader_ = function() {
-	if (this.element_) {
+	if (this.element_ && this.element_.parentElement) {
 		this.element_.parentElement.removeChild(this.element_);
 	}
 	
@@ -283,7 +293,7 @@ Block.prototype.defaultOptions = {
 };
 
 Block.prototype.render = function() {
-	if (this.element_) {
+	if (this.element_ && this.element_.parentElement) {
 		this.element_.parentElement.removeChild(this.element_);
 	}
 	var blockElement = $(document.createElement("div"))
