@@ -113,9 +113,7 @@ Schedule.prototype.createColumns_ = function() {
 		var column = this.columns_[colIndex];
 		column.schedule_ = this;
 		column.index_ = colIndex;
-		column.createHeader_();
-		column.updateLayout_();
-		column.createBlocks_();
+		column.render();
 	}
 };
 
@@ -147,6 +145,12 @@ Column = function(label, link, options) {
 };
 
 Column.prototype.defaultOptions = {
+};
+
+Column.prototype.render = function() {
+	this.createHeader_();
+	this.updateLayout_();
+	this.createBlocks_();
 };
 
 Column.prototype.createHeader_ = function() {
@@ -224,7 +228,7 @@ Column.prototype.createBlocks_ = function() {
 		var block = this.blocks_[blockIndex];
 		block.schedule_ = this.schedule_;
 		block.column_ = this;
-		block.createCell_();
+		block.render();
 	}
 };
 
@@ -275,7 +279,7 @@ Block.prototype.defaultOptions = {
 	cssClass: ''
 };
 
-Block.prototype.createCell_ = function() {
+Block.prototype.render = function() {
 	if (this.element_) {
 		this.element_.parentElement.removeChild(this.element_);
 	}
