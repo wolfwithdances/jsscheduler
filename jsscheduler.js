@@ -109,10 +109,10 @@ Schedule.prototype.createRowHeaders_ = function() {
 
 /** @private */
 Schedule.prototype.createColumns_ = function() {
-	for (var colIndex = 0; colIndex < this.columns_.length; colIndex += 1) {
-		var column = this.columns_[colIndex];
+	for (var index = 0; index < this.columns_.length; index += 1) {
+		var column = this.columns_[index];
 		column.schedule_ = this;
-		column.index_ = colIndex;
+		column.index_ = index;
 		column.render();
 	}
 };
@@ -186,23 +186,23 @@ Column.prototype.updateLayout_ = function() {
 	for (var blockIndex in this.blocks_) {
 		var block = this.blocks_[blockIndex];
 		
-		block.subColumnId_ = -1;
+		block.subColumnIndex_ = -1;
 		for (var i = block.row_, j = block.row_ + block.height_; i < j; i += 1) {
 			rowData[i].push(block);
 		}
 	}
 	
-	var maxCrowding = 0;
+	var maxSubColumnIndex = 0;
 	
 	for (var i = 0; i < this.schedule_.rowLabels_.length; i += 1) {
 		for (var rowBlockIndex in rowData[i]) {
 			var rowBlock = rowData[i][rowBlockIndex];
-			if (rowBlock.subColumnId_ == -1) {
-				var proposedSubColumn = 0;
+			if (rowBlock.subColumnIndex_ == -1) {
+				var proposedSubColumnIndex = 0;
 				while (true) {
 					var success = true;
 					for (var j = 0; j < rowData[i].length; j += 1) {
-						if (rowData[i][j].subColumnId_ == proposedSubColumn) {
+						if (rowData[i][j].subColumnIndex_ == proposedSubColumnIndex) {
 							success = false;
 							break;
 						}
@@ -210,18 +210,18 @@ Column.prototype.updateLayout_ = function() {
 					if (success) {
 						break;
 					}
-					proposedSubColumn += 1;
+					proposedSubColumnIndex += 1;
 				}
-				rowBlock.subColumnId_ = proposedSubColumn;
-				maxCrowding = Math.max(maxCrowding, proposedSubColumn);
+				rowBlock.subColumnIndex_ = proposedSubColumnIndex;
+				maxSubColumnIndex = Math.max(maxSubColumnIndex, proposedSubColumnIndex);
 			}
 		}
 	}
 	
 	for (var blockIndex in this.blocks_) {
 		var block = this.blocks_[blockIndex];
-		block.leftOffset_ = block.subColumnId_ * this.schedule_.options_.adjacentStep;
-		block.rightOffset_ = (maxCrowding - block.subColumnId_) * this.schedule_.options_.adjacentStep;
+		block.leftOffset_ = block.subColumnIndex_ * this.schedule_.options_.adjacentStep;
+		block.rightOffset_ = (maxSubColumnIndex - block.subColumnIndex_) * this.schedule_.options_.adjacentStep;
 	}
 };
 
@@ -269,7 +269,7 @@ Block = function(label, main, row, height, link, options) {
 	/** @type {Number} */
 	this.rightOffset_ = 0;
 	/** @type {Number} */
-	this.subColumnId_ = 0;
+	this.subColumnIndex_ = 0;
 };
 
 Block.prototype.defaultOptions = {
