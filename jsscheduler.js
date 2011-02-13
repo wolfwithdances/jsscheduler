@@ -17,9 +17,9 @@ Schedule = function(element, options) {
 	/** @type {Object} */
 	this.options = $.extend({}, this.defaultOptions, options);
 	/** @type {Array.<String>} */
-	this.rowLabels_ = [];
+	this.rowLabels = [];
 	/** @type {Array.<Column>} */
-	this.columns_ = [];
+	this.columns = [];
 	/** @type {Element} */
 	this.leftElement_ = null;
 	/** @type {Element} */
@@ -58,7 +58,7 @@ Schedule.prototype.emptyAllElements_ = function() {
 Schedule.prototype.resize_ = function() {
 	this.element_.css({
 		width: px(this.options.leftWidth + this.getVisibleColumns().length * this.options.columnWidth),
-		height: px(this.options.topHeight + this.rowLabels_.length * this.options.rowHeight)
+		height: px(this.options.topHeight + this.rowLabels.length * this.options.rowHeight)
 	});
 };
 
@@ -93,14 +93,14 @@ Schedule.prototype.createFrame_ = function() {
 
 /** @private */
 Schedule.prototype.createRowHeaders_ = function() {
-	for (var rowIndex = 0; rowIndex < this.rowLabels_.length; rowIndex += 1) {
+	for (var rowIndex = 0; rowIndex < this.rowLabels.length; rowIndex += 1) {
 		var rowHeader = $(document.createElement("div"))
 			.addClass("schedule_leftheadercell")
 			.css({
 				top: px(rowIndex * this.options.rowHeight),
 				height: px(this.options.rowHeight)
 			})
-			.text((rowIndex < this.rowLabels_.length) ? this.rowLabels_[rowIndex] : '')
+			.text((rowIndex < this.rowLabels.length) ? this.rowLabels[rowIndex] : '')
 			.appendTo(this.leftElement_);
 	}
 };
@@ -123,8 +123,8 @@ Schedule.prototype.createColumns_ = function() {
  */
 Schedule.prototype.getVisibleColumns = function() {
 	var visibleColumns = [];
-	for (var index = 0; index < this.columns_.length; index += 1) {
-		var column = this.columns_[index];
+	for (var index = 0; index < this.columns.length; index += 1) {
+		var column = this.columns[index];
 		if (column.options.visible) {
 			visibleColumns.push(column);
 		}
@@ -148,7 +148,7 @@ Column = function(label, link, options) {
 	/** @type {Object} */
 	this.options = $.extend({}, this.defaultOptions, this.options);
 	/** @type {Array.<Block>} */
-	this.blocks_ = [];
+	this.blocks = [];
 	/** @type {Element} */
 	this.element_ = null;
 	/** @type {Schedule} */
@@ -195,12 +195,12 @@ Column.prototype.createHeader_ = function() {
 Column.prototype.updateLayout_ = function() {
 	/** @type {Array.<Array.<Block>>} */
 	var rowData = [];
-	for (var i = 0, len = this.schedule_.rowLabels_.length; i < len; i += 1) {
+	for (var i = 0, len = this.schedule_.rowLabels.length; i < len; i += 1) {
 		rowData[i] = [];
 	}
-	for (var blockIndex in this.blocks_) {
+	for (var blockIndex in this.blocks) {
 		/** @type {Block} */
-		var block = this.blocks_[blockIndex];
+		var block = this.blocks[blockIndex];
 		
 		block.subColumnIndex_ = -1;
 		for (var i = block.row_, j = block.row_ + block.height_; i < j; i += 1) {
@@ -210,7 +210,7 @@ Column.prototype.updateLayout_ = function() {
 	
 	var maxSubColumnIndex = 0;
 	
-	for (var i = 0; i < this.schedule_.rowLabels_.length; i += 1) {
+	for (var i = 0; i < this.schedule_.rowLabels.length; i += 1) {
 		for (var rowBlockIndex in rowData[i]) {
 			var rowBlock = rowData[i][rowBlockIndex];
 			if (rowBlock.subColumnIndex_ == -1) {
@@ -234,8 +234,8 @@ Column.prototype.updateLayout_ = function() {
 		}
 	}
 	
-	for (var blockIndex in this.blocks_) {
-		var block = this.blocks_[blockIndex];
+	for (var blockIndex in this.blocks) {
+		var block = this.blocks[blockIndex];
 		block.leftOffset_ = block.subColumnIndex_ * this.schedule_.options.adjacentStep;
 		block.rightOffset_ = (maxSubColumnIndex - block.subColumnIndex_) * this.schedule_.options.adjacentStep;
 	}
@@ -243,8 +243,8 @@ Column.prototype.updateLayout_ = function() {
 
 /** @private */
 Column.prototype.createBlocks_ = function() {
-	for (var blockIndex in this.blocks_) {
-		var block = this.blocks_[blockIndex];
+	for (var blockIndex in this.blocks) {
+		var block = this.blocks[blockIndex];
 		block.schedule_ = this.schedule_;
 		block.column_ = this;
 		block.render();
