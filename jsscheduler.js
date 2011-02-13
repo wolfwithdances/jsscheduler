@@ -37,7 +37,7 @@ Schedule.prototype.defaultOptions = {
 	topHeight: 40,
 	cellMargin: 1,
 	adjacentStep: 10,
-	topAxisTitle: "Tracks"
+	topAxisTitle: ""
 };
 
 /** Removes and rerenders all elements. */
@@ -162,6 +162,9 @@ Column.prototype.defaultOptions = {
 };
 
 Column.prototype.render = function() {
+	if (this.schedule_ == null) {
+		throw "NoScheduleSetError";
+	}
 	this.createHeader_();
 	this.updateLayout_();
 	this.createBlocks_();
@@ -299,6 +302,9 @@ Block.prototype.defaultOptions = {
 };
 
 Block.prototype.render = function() {
+	if (this.schedule_ == null) {
+		throw "NoScheduleSetError";
+	}
 	if (this.element_ && this.element_.parentElement) {
 		this.element_.parentElement.removeChild(this.element_);
 	}
