@@ -193,8 +193,10 @@ Schedule.prototype.createBlocks_ = function() {
 		
 		var blockElement = $(document.createElement("div"))
 			.addClass("schedule_gridcell")
+			.addClass(block.options.cssClass)
 			.css({
 				backgroundColor: block.options.borderColor,
+				color: block.options.labelTextColor,
 				left: px(this.options.columnWidth * columnMap[block.columnId] + block.leftOffset),
 				top: px(this.options.rowHeight * block.row),
 				width: px(this.options.columnWidth - this.options.cellMargin - block.leftOffset - block.rightOffset),
@@ -271,10 +273,12 @@ Block = function(label, main, row, columnId, height, link, options) {
 
 Block.prototype.defaultOptions = {
 	borderColor: "#009",
+	labelTextColor: "#fff",
 	interiorColor: "#fff",
 	textColor: "#000",
 	enabled: true,
-	visible: true
+	visible: true,
+	cssClass: ''
 };
 
 /**
