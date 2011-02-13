@@ -33,8 +33,15 @@
 			borderColor: "#f00",
 			interiorColor: "#f99"
 		}),
-		new Block("7pm-12am", "Registration and Thursday Night Mixer", 1, 8, 10, "/mff2009/block/1"),
-		new Block("8pm-11pm", "Dance", 3, 8, 6, "/mff2009/block/2"),
+		new Block("7pm-12am", "Registration and Thursday Night Mixer", 1, 8, 10, "/mff2009/block/1", {
+			borderColor: "#060",
+			interiorColor: "#6f6",
+		}),
+		new Block("8pm-11pm", "Dance", 3, 8, 6, "/mff2009/block/2", {
+			borderColor: "#000",
+			interiorColor: "#111",
+			textColor: "#fff"
+		}),
 		new Block("8pm-11pm", "Video Gaming", 3, 7, 6, "/mff2009/block/4")
 	];
 	schedule.render();

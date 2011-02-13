@@ -209,7 +209,8 @@ Schedule.prototype.createBlocks_ = function() {
 			$(document.createElement("div"))
 				.addClass("main")
 				.css({
-					backgroundColor: block.options.interiorColor
+					backgroundColor: block.options.interiorColor,
+					color: block.options.textColor
 				})
 				.text(block.main)
 				.appendTo(blockElement);
@@ -271,6 +272,7 @@ Block = function(label, main, row, columnId, height, link, options) {
 Block.prototype.defaultOptions = {
 	borderColor: "#009",
 	interiorColor: "#fff",
+	textColor: "#000",
 	enabled: true,
 	visible: true
 };
