@@ -153,6 +153,7 @@ Column.prototype.render = function() {
 	this.createBlocks_();
 };
 
+/** @private */
 Column.prototype.createHeader_ = function() {
 	if (this.element_) {
 		this.element_.parentElement.removeChild(this.element_);
@@ -176,6 +177,7 @@ Column.prototype.createHeader_ = function() {
 	this.schedule_.topElement_.append(columnHeader);
 };
 
+/** @private */
 Column.prototype.updateLayout_ = function() {
 	var rowData = [];
 	for (var i = 0, len = this.schedule_.rowLabels_.length; i < len; i += 1) {
@@ -223,6 +225,7 @@ Column.prototype.updateLayout_ = function() {
 	}
 };
 
+/** @private */
 Column.prototype.createBlocks_ = function() {
 	for (var blockIndex in this.blocks_) {
 		var block = this.blocks_[blockIndex];
