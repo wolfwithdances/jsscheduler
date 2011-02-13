@@ -12,7 +12,7 @@
 	schedule = new Schedule("#schedule1", {
 		topAxisTitle: "Schedule Tracks"
 	});
-	schedule.columns = [
+	schedule.columns_ = [
 		new Column(3, "Art and Lit", "/mff2009/track/3"),
 		new Column(6, "Fandom", "/mff2009/track/6"),
 		new Column(1, "Fursuit", "/mff2009/track/1"),
@@ -25,10 +25,10 @@
 	];
 	
 
-	schedule.rowLabels = [ "Thu 6:30PM","7:00PM","7:30PM","8:00PM","8:30PM","9:00PM","9:30PM",
+	schedule.rowLabels_ = [ "Thu 6:30PM","7:00PM","7:30PM","8:00PM","8:30PM","9:00PM","9:30PM",
 			"10:00PM","10:30PM","11:00PM","11:30PM","Fri 12:00AM","12:30AM","1:00AM","1:30AM",
 			"2:00AM","2:30AM"];
-	schedule.blocks = [
+	schedule.blocks_ = [
 		new Block("7pm-2am", "Video", 1, 5, 14, "/mff2009/block/3", {
 			borderColor: "#fcc",
 			interiorColor: "#f99",

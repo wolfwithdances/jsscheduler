@@ -5,17 +5,22 @@
  */
 (function($) {
 
-/** @constructor */
+/**
+ * Creates a new JSSchedule element.
+ * @param element A JQuery text selector.
+ * @param options A hash of options.
+ * @constructor
+ */
 Schedule = function(element, options) {
-	this.element = $(element).first();
-	this.options = $.extend({}, this.defaultOptions, options);
-	this.rowLabels = [];
-	this.columns = [];
-	this.blocks = [];
-	this.leftElement = null;
-	this.topElement = null;
-	this.gridElement = null;
-	this.topAxisLabelElement = null;
+	this.element_ = $(element).first();
+	this.options_ = $.extend({}, this.defaultOptions, options);
+	this.rowLabels_ = [];
+	this.columns_ = [];
+	this.blocks_ = [];
+	this.leftElement_ = null;
+	this.topElement_ = null;
+	this.gridElement_ = null;
+	this.topAxisLabelElement_ = null;
 };
 
 Schedule.prototype.defaultOptions = {
@@ -28,6 +33,7 @@ Schedule.prototype.defaultOptions = {
 	topAxisTitle: "Tracks"
 };
 
+/** Removes and rerenders all elements. */
 Schedule.prototype.render = function() {
 	this.emptyAllElements_();
 	this.resize_();
@@ -38,59 +44,59 @@ Schedule.prototype.render = function() {
 
 /** @private */
 Schedule.prototype.emptyAllElements_ = function() {
-	this.element.find().each(function(x) {
+	this.element_.find().each(function(x) {
 		x.parentElement.removeChild(x);
 	});
 };
 
 /** @private */
 Schedule.prototype.resize_ = function() {
-	this.element.css({
-		width: px(this.options.leftWidth + this.columns.length * this.options.columnWidth),
-		height: px(this.options.topHeight + this.rowLabels.length * this.options.rowHeight)
+	this.element_.css({
+		width: px(this.options_.leftWidth + this.columns_.length * this.options_.columnWidth),
+		height: px(this.options_.topHeight + this.rowLabels_.length * this.options_.rowHeight)
 	});
 };
 
 /** @private */
 Schedule.prototype.createFrame_ = function() {
-	this.leftElement = $(document.createElement("div"))
+	this.leftElement_ = $(document.createElement("div"))
 		.addClass("schedule_headerleft")
 		.css({
-			top: px(this.options.topHeight),
-			width: px(this.options.leftWidth)
+			top: px(this.options_.topHeight),
+			width: px(this.options_.leftWidth)
 		});
-	this.topElement = $(document.createElement("div"))
+	this.topElement_ = $(document.createElement("div"))
 		.addClass("schedule_headertop")
 		.css({
-			height: px(this.options.topHeight),
-			left: px(this.options.leftWidth)
+			height: px(this.options_.topHeight),
+			left: px(this.options_.leftWidth)
 		});
-	this.topAxisLabelElement = $(document.createElement("div"))
+	this.topAxisLabelElement_ = $(document.createElement("div"))
 		.addClass("schedule_topaxislabel")
-		.text(this.options.topAxisTitle)
-		.appendTo(this.topElement);
-	this.gridElement = $(document.createElement("div"))
+		.text(this.options_.topAxisTitle)
+		.appendTo(this.topElement_);
+	this.gridElement_ = $(document.createElement("div"))
 		.addClass("schedule_grid")
 		.css({
-			left: px(this.options.leftWidth),
-			top: px(this.options.topHeight)
+			left: px(this.options_.leftWidth),
+			top: px(this.options_.topHeight)
 		});
-	this.element.append(this.leftElement);
-	this.element.append(this.topElement);
-	this.element.append(this.gridElement);
+	this.element_.append(this.leftElement_);
+	this.element_.append(this.topElement_);
+	this.element_.append(this.gridElement_);
 };
 
 /** @private */
 Schedule.prototype.createRowHeaders_ = function() {
-	for (var rowIndex = 0; rowIndex < this.rowLabels.length; rowIndex += 1) {
+	for (var rowIndex = 0; rowIndex < this.rowLabels_.length; rowIndex += 1) {
 		var rowHeader = $(document.createElement("div"))
 			.addClass("schedule_leftheadercell")
 			.css({
-				top: px(rowIndex * this.options.rowHeight),
-				height: px(this.options.rowHeight)
+				top: px(rowIndex * this.options_.rowHeight),
+				height: px(this.options_.rowHeight)
 			})
-			.text((rowIndex < this.rowLabels.length) ? this.rowLabels[rowIndex] : '')
-			.appendTo(this.leftElement);
+			.text((rowIndex < this.rowLabels_.length) ? this.rowLabels_[rowIndex] : '')
+			.appendTo(this.leftElement_);
 	}
 };
 
@@ -99,43 +105,43 @@ Schedule.prototype.createBlocks_ = function() {
 	var columnMap = {};
 	
 	// add columns
-	for (var colIndex = 0; colIndex < this.columns.length; colIndex += 1) {
-		var column = this.columns[colIndex];
-		column.currentIndex = colIndex;
-		columnMap[column.id] = colIndex;
+	for (var colIndex = 0; colIndex < this.columns_.length; colIndex += 1) {
+		var column = this.columns_[colIndex];
+		column.currentIndex_ = colIndex;
+		columnMap[column.id_] = colIndex;
 		var columnHeader = $(document.createElement("div"))
 			.addClass("schedule_topheadercell")
 			.css({
-				left: px(colIndex * this.options.columnWidth),
-				width: px(this.options.columnWidth)
+				left: px(colIndex * this.options_.columnWidth),
+				width: px(this.options_.columnWidth)
 			});
-		if (!column.link) {
-			columnHeader.text(column.label);
+		if (!column.link_) {
+			columnHeader.text(column.label_);
 		} else {
 			var columnAnchor = $(document.createElement("a"))
-				.attr("href", column.link)
-				.text(column.label)
+				.attr("href", column.link_)
+				.text(column.label_)
 				.appendTo(columnHeader);
 		}
-		column.element = columnHeader;
-		this.topElement.append(columnHeader);
+		column.element_ = columnHeader;
+		this.topElement_.append(columnHeader);
 		
 		var colBlocks = [];
 		var rowData = [];
-		for (var i = 0, len = this.rowLabels.length; i < len; i += 1) {
+		for (var i = 0, len = this.rowLabels_.length; i < len; i += 1) {
 			rowData[i] = null;
 		}
-		for (var blockIndex in this.blocks) {
-			var block = this.blocks[blockIndex];
-			if (block.columnId == column.id) {
+		for (var blockIndex in this.blocks_) {
+			var block = this.blocks_[blockIndex];
+			if (block.columnId_ == column.id_) {
 				colBlocks.push(block);
 			} else {
 				continue;
 			}
 			
-			block.subColumnId = -1;
+			block.subColumnId_ = -1;
 			
-			for (var i = block.row, j = block.row + block.height; i < j; i += 1) {
+			for (var i = block.row_, j = block.row_ + block.height_; i < j; i += 1) {
 				if(rowData[i] == null) {
 					rowData[i] = [block];
 				} else {
@@ -146,18 +152,18 @@ Schedule.prototype.createBlocks_ = function() {
 		
 		var maxCrowding = 0;
 		
-		for (var i = 0; i < this.rowLabels.length; i += 1) {
+		for (var i = 0; i < this.rowLabels_.length; i += 1) {
 			if (rowData[i] == null) {
 				continue;
 			}
 			for (var rowBlockIndex in rowData[i]) {
 				var rowBlock = rowData[i][rowBlockIndex];
-				if (rowBlock.subColumnId == -1) {
+				if (rowBlock.subColumnId_ == -1) {
 					var proposedSubColumn = 0;
 					while (true) {
 						var success = true;
 						for (var j = 0; j < rowData[i].length; j += 1) {
-							if (rowData[i][j].subColumnId == proposedSubColumn) {
+							if (rowData[i][j].subColumnId_ == proposedSubColumn) {
 								success = false;
 								break;
 							}
@@ -167,7 +173,7 @@ Schedule.prototype.createBlocks_ = function() {
 						}
 						proposedSubColumn += 1;
 					}
-					rowBlock.subColumnId = proposedSubColumn;
+					rowBlock.subColumnId_ = proposedSubColumn;
 					if (proposedSubColumn > maxCrowding) {
 						maxCrowding = proposedSubColumn;
 					}
@@ -177,60 +183,60 @@ Schedule.prototype.createBlocks_ = function() {
 		
 		for (var blockIndex in colBlocks) {
 			var block = colBlocks[blockIndex];
-			block.leftOffset = block.subColumnId * this.options.adjacentStep;
-			block.rightOffset = (maxCrowding - block.subColumnId) * this.options.adjacentStep;
+			block.leftOffset_ = block.subColumnId_ * this.options_.adjacentStep;
+			block.rightOffset_ = (maxCrowding - block.subColumnId_) * this.options_.adjacentStep;
 		}
 	}
 	
 	// add blocks
-	for (var blockIndex = 0, len = this.blocks.length; blockIndex < len; blockIndex += 1) {
+	for (var blockIndex = 0, len = this.blocks_.length; blockIndex < len; blockIndex += 1) {
 		/** @type {Block} */
-		var block = this.blocks[blockIndex];
+		var block = this.blocks_[blockIndex];
 		
-		if (columnMap[block.columnId] === undefined) {
+		if (columnMap[block.columnId_] === undefined) {
 			continue;
 		}
 		
 		var blockElement = $(document.createElement("div"))
 			.addClass("schedule_gridcell")
-			.addClass(block.options.cssClass)
+			.addClass(block.options_.cssClass)
 			.css({
-				backgroundColor: block.options.borderColor,
-				color: block.options.labelTextColor,
-				left: px(this.options.columnWidth * columnMap[block.columnId] + block.leftOffset),
-				top: px(this.options.rowHeight * block.row),
-				width: px(this.options.columnWidth - this.options.cellMargin - block.leftOffset - block.rightOffset),
-				height: px(block.height * this.options.rowHeight - this.options.cellMargin),
-				display: block.options.visible ? "block" : "none"
+				backgroundColor: block.options_.borderColor,
+				color: block.options_.labelTextColor,
+				left: px(this.options_.columnWidth * columnMap[block.columnId_] + block.leftOffset_),
+				top: px(this.options_.rowHeight * block.row_),
+				width: px(this.options_.columnWidth - this.options_.cellMargin - block.leftOffset_ - block.rightOffset_),
+				height: px(block.height_ * this.options_.rowHeight - this.options_.cellMargin),
+				display: block.options_.visible ? "block" : "none"
 			});
-		if (block.height > 1) {
+		if (block.height_ > 1) {
 			$(document.createElement("div"))
 				.addClass("schedule_cellcaption")
-				.text(block.label)
+				.text(block.label_)
 				.appendTo(blockElement);
 			$(document.createElement("div"))
 				.addClass("schedule_cellbody")
 				.css({
-					backgroundColor: block.options.interiorColor,
-					color: block.options.textColor
+					backgroundColor: block.options_.interiorColor,
+					color: block.options_.textColor
 				})
-				.text(block.main)
+				.text(block.main_)
 				.appendTo(blockElement);
 		} else {
 			$(document.createElement("div"))
 				.addClass("label")
-				.text(block.main)
+				.text(block.main_)
 				.appendTo(blockElement);
 			$(document.createElement("div"))
 				.addClass("main")
 				.appendTo(blockElement);
 		}
-		if (!block.options.enabled) {
-			block.addClass("disabled");
+		if (!block.options_.enabled) {
+			blockElement.addClass("disabled");
 		}
-		if (block.link) {
+		if (block.link_) {
 			blockElement.click({ block: block }, function(evt) {
-				location.href = evt.data.block.link;
+				location.href = evt.data.block.link_;
 			});
 		}
 		blockElement.mouseenter({ blockElement: blockElement }, function(evt) {
@@ -240,8 +246,8 @@ Schedule.prototype.createBlocks_ = function() {
 			evt.data.blockElement.removeClass("hover");
 		});
 		
-		block.element = blockElement;
-		this.gridElement.append(blockElement);
+		block.element_ = blockElement;
+		this.gridElement_.append(blockElement);
 	}
 };
 
@@ -257,18 +263,18 @@ Schedule.prototype.createBlocks_ = function() {
  * @constructor
  */
 Block = function(label, main, row, columnId, height, link, options) { 
-	this.label = label;
-	this.main = main;
-	this.row = row;
-	this.columnId = columnId;
-	this.height = height;
-	this.link = link;
-	this.options = $.extend({}, this.defaultOptions, options);
+	this.label_ = label;
+	this.main_ = main;
+	this.row_ = row;
+	this.columnId_ = columnId;
+	this.height_ = height;
+	this.link_ = link;
+	this.options_ = $.extend({}, this.defaultOptions, options);
 	
-	this.element = null;
-	this.leftOffset = 0;
-	this.rightOffset = 0;
-	this.subColumnId = 0;
+	this.element_ = null;
+	this.leftOffset_ = 0;
+	this.rightOffset_ = 0;
+	this.subColumnId_ = 0;
 };
 
 Block.prototype.defaultOptions = {
@@ -291,13 +297,13 @@ Block.prototype.defaultOptions = {
  * @constructor
  */
 Column = function(id, label, link, options) {
-	this.id = id;
-	this.label = label;
-	this.link = link;
-	this.options = $.extend({}, this.defaultOptions, this.options);
-	this.element = null;
-	this.visible = true;
-	this.currentIndex = -1;
+	this.id_ = id;
+	this.label_ = label;
+	this.link_ = link;
+	this.options_ = $.extend({}, this.defaultOptions, this.options);
+	this.element_ = null;
+	this.visible_ = true;
+	this.currentIndex_ = -1;
 };
 
 Column.prototype.defaultOptions = {
