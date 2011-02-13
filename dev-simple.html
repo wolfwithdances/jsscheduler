@@ -7,9 +7,9 @@
 </head>
 <body>
 <h1>JSScheduler</h1>
-<input type="checkbox" id="gaming" checked="checked"/> Gaming <br />
-<input type="checkbox" id="mainEvents" checked="checked"/> Main Events <br />
-<input type="checkbox" id="video" checked="checked"/> Video <br />
+<input type="checkbox" id="gaming" checked="checked"/><label for="gaming"> Gaming</label><br />
+<input type="checkbox" id="mainEvents" checked="checked"/><label for="mainEvents"> Main Events</label><br />
+<input type="checkbox" id="video" checked="checked"/><label for="video"> Video</label> <br />
 <div id="schedule1" class="schedule_container"></div>
 <script type="text/javascript">
 	schedule = new Schedule("#schedule1", {
@@ -25,15 +25,15 @@
 	];
 	
 	$("#gaming").change(function() {
-		gaming.options_.visible = this.checked;
+		gaming.options.visible = this.checked;
 		schedule.render();
 	});
 	$("#mainEvents").change(function() {
-		mainEvents.options_.visible = this.checked;
+		mainEvents.options.visible = this.checked;
 		schedule.render();
 	});
 	$("#video").change(function() {
-		video.options_.visible = this.checked;
+		video.options.visible = this.checked;
 		schedule.render();
 	});
 	
