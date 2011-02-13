@@ -16,7 +16,6 @@ Schedule = function(element, options) {
 	this.options_ = $.extend({}, this.defaultOptions, options);
 	this.rowLabels_ = [];
 	this.columns_ = [];
-	this.blocks_ = [];
 	this.leftElement_ = null;
 	this.topElement_ = null;
 	this.gridElement_ = null;
@@ -102,13 +101,9 @@ Schedule.prototype.createRowHeaders_ = function() {
 
 /** @private */
 Schedule.prototype.createBlocks_ = function() {
-	var columnMap = {};
-	
 	// add columns
 	for (var colIndex = 0; colIndex < this.columns_.length; colIndex += 1) {
 		var column = this.columns_[colIndex];
-		column.currentIndex_ = colIndex;
-		columnMap[column.id_] = colIndex;
 		var columnHeader = $(document.createElement("div"))
 			.addClass("schedule_topheadercell")
 			.css({
@@ -126,36 +121,24 @@ Schedule.prototype.createBlocks_ = function() {
 		column.element_ = columnHeader;
 		this.topElement_.append(columnHeader);
 		
-		var colBlocks = [];
+		var colBlocks = column.blocks_;
 		var rowData = [];
 		for (var i = 0, len = this.rowLabels_.length; i < len; i += 1) {
-			rowData[i] = null;
+			rowData[i] = [];
 		}
-		for (var blockIndex in this.blocks_) {
-			var block = this.blocks_[blockIndex];
-			if (block.columnId_ == column.id_) {
-				colBlocks.push(block);
-			} else {
-				continue;
-			}
+		for (var blockIndex in colBlocks) {
+			var block = colBlocks[blockIndex];
 			
 			block.subColumnId_ = -1;
 			
 			for (var i = block.row_, j = block.row_ + block.height_; i < j; i += 1) {
-				if(rowData[i] == null) {
-					rowData[i] = [block];
-				} else {
-					rowData[i].push(block);
-				}
+				rowData[i].push(block);
 			}
 		}
 		
 		var maxCrowding = 0;
 		
 		for (var i = 0; i < this.rowLabels_.length; i += 1) {
-			if (rowData[i] == null) {
-				continue;
-			}
 			for (var rowBlockIndex in rowData[i]) {
 				var rowBlock = rowData[i][rowBlockIndex];
 				if (rowBlock.subColumnId_ == -1) {
@@ -174,9 +157,7 @@ Schedule.prototype.createBlocks_ = function() {
 						proposedSubColumn += 1;
 					}
 					rowBlock.subColumnId_ = proposedSubColumn;
-					if (proposedSubColumn > maxCrowding) {
-						maxCrowding = proposedSubColumn;
-					}
+					maxCrowding = Math.max(maxCrowding, proposedSubColumn);
 				}
 			}
 		}
@@ -185,88 +166,98 @@ Schedule.prototype.createBlocks_ = function() {
 			var block = colBlocks[blockIndex];
 			block.leftOffset_ = block.subColumnId_ * this.options_.adjacentStep;
 			block.rightOffset_ = (maxCrowding - block.subColumnId_) * this.options_.adjacentStep;
-		}
-	}
-	
-	// add blocks
-	for (var blockIndex = 0, len = this.blocks_.length; blockIndex < len; blockIndex += 1) {
-		/** @type {Block} */
-		var block = this.blocks_[blockIndex];
-		
-		if (columnMap[block.columnId_] === undefined) {
-			continue;
-		}
-		
-		var blockElement = $(document.createElement("div"))
-			.addClass("schedule_gridcell")
-			.addClass(block.options_.cssClass)
-			.css({
-				backgroundColor: block.options_.borderColor,
-				color: block.options_.labelTextColor,
-				left: px(this.options_.columnWidth * columnMap[block.columnId_] + block.leftOffset_),
-				top: px(this.options_.rowHeight * block.row_),
-				width: px(this.options_.columnWidth - this.options_.cellMargin - block.leftOffset_ - block.rightOffset_),
-				height: px(block.height_ * this.options_.rowHeight - this.options_.cellMargin),
-				display: block.options_.visible ? "block" : "none"
-			});
-		if (block.height_ > 1) {
-			$(document.createElement("div"))
-				.addClass("schedule_cellcaption")
-				.text(block.label_)
-				.appendTo(blockElement);
-			$(document.createElement("div"))
-				.addClass("schedule_cellbody")
+			
+			var blockElement = $(document.createElement("div"))
+				.addClass("schedule_gridcell")
+				.addClass(block.options_.cssClass)
 				.css({
-					backgroundColor: block.options_.interiorColor,
-					color: block.options_.textColor
-				})
-				.text(block.main_)
-				.appendTo(blockElement);
-		} else {
-			$(document.createElement("div"))
-				.addClass("label")
-				.text(block.main_)
-				.appendTo(blockElement);
-			$(document.createElement("div"))
-				.addClass("main")
-				.appendTo(blockElement);
-		}
-		if (!block.options_.enabled) {
-			blockElement.addClass("disabled");
-		}
-		if (block.link_) {
-			blockElement.click({ block: block }, function(evt) {
-				location.href = evt.data.block.link_;
+					backgroundColor: block.options_.borderColor,
+					color: block.options_.labelTextColor,
+					left: px(this.options_.columnWidth * colIndex + block.leftOffset_),
+					top: px(this.options_.rowHeight * block.row_),
+					width: px(this.options_.columnWidth - this.options_.cellMargin - block.leftOffset_ - block.rightOffset_),
+					height: px(block.height_ * this.options_.rowHeight - this.options_.cellMargin),
+					display: block.options_.visible ? "block" : "none"
+				});
+			if (block.height_ > 1) {
+				$(document.createElement("div"))
+					.addClass("schedule_cellcaption")
+					.text(block.label_)
+					.appendTo(blockElement);
+				$(document.createElement("div"))
+					.addClass("schedule_cellbody")
+					.css({
+						backgroundColor: block.options_.interiorColor,
+						color: block.options_.textColor
+					})
+					.text(block.main_)
+					.appendTo(blockElement);
+			} else {
+				$(document.createElement("div"))
+					.addClass("label")
+					.text(block.main_)
+					.appendTo(blockElement);
+				$(document.createElement("div"))
+					.addClass("main")
+					.appendTo(blockElement);
+			}
+			if (!block.options_.enabled) {
+				blockElement.addClass("disabled");
+			}
+			if (block.link_) {
+				blockElement.click({ block: block }, function(evt) {
+					location.href = evt.data.block.link_;
+				});
+			}
+			blockElement.mouseenter({ blockElement: blockElement }, function(evt) {
+				evt.data.blockElement.addClass("hover");
 			});
+			blockElement.mouseleave({ blockElement: blockElement }, function(evt) {
+				evt.data.blockElement.removeClass("hover");
+			});
+			
+			block.element_ = blockElement;
+			this.gridElement_.append(blockElement);
 		}
-		blockElement.mouseenter({ blockElement: blockElement }, function(evt) {
-			evt.data.blockElement.addClass("hover");
-		});
-		blockElement.mouseleave({ blockElement: blockElement }, function(evt) {
-			evt.data.blockElement.removeClass("hover");
-		});
-		
-		block.element_ = blockElement;
-		this.gridElement_.append(blockElement);
 	}
+};
+
+/**
+ * Creates a Column object.
+ * 
+ * @param {any} id An ID used to map columns to locations.
+ * @param {String} label Column title.
+ * @param {String=} link URL to which the column header should link.
+ * @param {Object} options A hash of options. 
+ * @constructor
+ */
+Column = function(id, label, link, options) {
+	this.id_ = id;
+	this.label_ = label;
+	this.link_ = link;
+	this.options_ = $.extend({}, this.defaultOptions, this.options);
+	this.blocks_ = [];
+	this.element_ = null;
+	this.visible_ = true;
+	this.currentIndex_ = -1;
+};
+
+Column.prototype.defaultOptions = {
 };
 
 /**
  * @param {String} label The label that should go at the top of the block.
  * @param {String} main The text that should go inside the block.
  * @param {Number} row The first row that should contain the block.
- * @param {Number} columnId The column ID (not column index) that should
- *     contain the block.
  * @param {Number} height The total number or rows that the block should span.
  * @param {String} link URL to which the block should link.
  * @param {Object} options A hash of options.
  * @constructor
  */
-Block = function(label, main, row, columnId, height, link, options) { 
+Block = function(label, main, row, height, link, options) { 
 	this.label_ = label;
 	this.main_ = main;
 	this.row_ = row;
-	this.columnId_ = columnId;
 	this.height_ = height;
 	this.link_ = link;
 	this.options_ = $.extend({}, this.defaultOptions, options);
@@ -285,28 +276,6 @@ Block.prototype.defaultOptions = {
 	enabled: true,
 	visible: true,
 	cssClass: ''
-};
-
-/**
- * Creates a Column object.
- * 
- * @param {any} id An ID used to map columns to locations.
- * @param {String} label Column title.
- * @param {String=} link URL to which the column header should link.
- * @param {Object} options A hash of options. 
- * @constructor
- */
-Column = function(id, label, link, options) {
-	this.id_ = id;
-	this.label_ = label;
-	this.link_ = link;
-	this.options_ = $.extend({}, this.defaultOptions, this.options);
-	this.element_ = null;
-	this.visible_ = true;
-	this.currentIndex_ = -1;
-};
-
-Column.prototype.defaultOptions = {
 };
 
 function px(value) {
