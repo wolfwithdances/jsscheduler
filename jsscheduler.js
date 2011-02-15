@@ -69,13 +69,17 @@ Schedule.prototype.createFrame_ = function() {
 		.css({
 			top: px(this.options.topHeight),
 			width: px(this.options.leftWidth)
-		});
+		})
+		.appendTo(this.element_);
+
 	this.topElement_ = $(document.createElement("div"))
 		.addClass("schedule_headertop")
 		.css({
 			height: px(this.options.topHeight),
 			left: px(this.options.leftWidth)
-		});
+		})
+		.appendTo(this.element_);
+	
 	this.topAxisLabelElement_ = $(document.createElement("div"))
 		.addClass("schedule_topaxislabel")
 		.text(this.options.topAxisTitle)
@@ -85,10 +89,8 @@ Schedule.prototype.createFrame_ = function() {
 		.css({
 			left: px(this.options.leftWidth),
 			top: px(this.options.topHeight)
-		});
-	this.element_.append(this.leftElement_);
-	this.element_.append(this.topElement_);
-	this.element_.append(this.gridElement_);
+		})
+		.appendTo(this.element_);
 };
 
 /** @private */
