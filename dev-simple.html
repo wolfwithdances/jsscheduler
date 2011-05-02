@@ -1,9 +1,14 @@
+<!--
+  JSScheduler (c) 2011 Jeff Bowman
+  Released as part of Wepwawet under Apache license 2.0
+  Written for JQuery 1.5 - Originally coded for FurEvent
+-->
 <html>
 <head>
-	<title>Development - JSScheduler</title>
-	<script type="text/javascript" src="jquery/jquery-1.5.js"></script>
-	<script type="text/javascript" src="jsscheduler.js"></script>
-	<link rel="stylesheet" href="jsscheduler.css" type="text/css" />
+  <title>Development - JSScheduler</title>
+  <script type="text/javascript" src="jquery/jquery-1.5.js"></script>
+  <script type="text/javascript" src="jsscheduler.js"></script>
+  <link rel="stylesheet" href="jsscheduler.css" type="text/css" />
 </head>
 <body>
 <h1>JSScheduler</h1>
@@ -12,56 +17,56 @@
 <input type="checkbox" id="video" checked="checked"/><label for="video"> Video</label> <br />
 <div id="schedule1" class="schedule_container"></div>
 <script type="text/javascript">
-	schedule = new Schedule("#schedule1", {
-		topAxisTitle: "Tracks"
-	});
-	var gaming = new Column("Gaming", "/mff2009/track/7");
-	var mainEvents = new Column("Main Events / Other", "/mff2009/track/8")
-	var video = new Column("Video", "/mff2009/track/5");
-	schedule.columns = [
-		gaming,
-		mainEvents,
-		video
-	];
-	
-	$("#gaming").change(function() {
-		gaming.options.visible = this.checked;
-		schedule.render();
-	});
-	$("#mainEvents").change(function() {
-		mainEvents.options.visible = this.checked;
-		schedule.render();
-	});
-	$("#video").change(function() {
-		video.options.visible = this.checked;
-		schedule.render();
-	});
-	
-	schedule.rowLabels = [ "Thu 6:30PM","7:00PM","7:30PM","8:00PM","8:30PM","9:00PM","9:30PM",
-			"10:00PM","10:30PM","11:00PM","11:30PM","Fri 12:00AM","12:30AM","1:00AM","1:30AM",
-			"2:00AM","2:30AM"];
-	video.blocks = [
-		new Block("7pm-2am", "Video", 1, 14, "/mff2009/block/3", {
-			borderColor: "#fcc",
-			interiorColor: "#f99",
-			labelTextColor: "#000"
-		})
-	];
-	mainEvents.blocks = [
-		new Block("7pm-12am", "Registration and Thursday Night Mixer", 1, 10, "/mff2009/block/1", {
-			borderColor: "#060",
-			interiorColor: "#6f6",
-		}),
-		new Block("8pm-11pm", "Dance", 3, 6, "/mff2009/block/2", {
-			borderColor: "#000",
-			interiorColor: "#111",
-			textColor: "#fff"
-		})
-	];
-	gaming.blocks = [
-		new Block("8pm-11pm", "Video Gaming", 3, 6, "/mff2009/block/4")
-	];
-	schedule.render();
+  schedule = new Schedule("#schedule1", {
+    topAxisTitle: "Tracks"
+  });
+  var gaming = new Column("Gaming", "/mff2009/track/7");
+  var mainEvents = new Column("Main Events / Other", "/mff2009/track/8")
+  var video = new Column("Video", "/mff2009/track/5");
+  schedule.columns = [
+    gaming,
+    mainEvents,
+    video
+  ];
+  
+  $("#gaming").change(function() {
+    gaming.options.visible = this.checked;
+    schedule.render();
+  });
+  $("#mainEvents").change(function() {
+    mainEvents.options.visible = this.checked;
+    schedule.render();
+  });
+  $("#video").change(function() {
+    video.options.visible = this.checked;
+    schedule.render();
+  });
+  
+  schedule.rowLabels = [ "Thu 6:30PM","7:00PM","7:30PM","8:00PM","8:30PM","9:00PM","9:30PM",
+      "10:00PM","10:30PM","11:00PM","11:30PM","Fri 12:00AM","12:30AM","1:00AM","1:30AM",
+      "2:00AM","2:30AM"];
+  video.blocks = [
+    new Block("7pm-2am", "Video", 1, 14, "/mff2009/block/3", {
+      borderColor: "#fcc",
+      interiorColor: "#f99",
+      labelTextColor: "#000"
+    })
+  ];
+  mainEvents.blocks = [
+    new Block("7pm-12am", "Registration and Thursday Night Mixer", 1, 10, "/mff2009/block/1", {
+      borderColor: "#060",
+      interiorColor: "#6f6",
+    }),
+    new Block("8pm-11pm", "Dance", 3, 6, "/mff2009/block/2", {
+      borderColor: "#000",
+      interiorColor: "#111",
+      textColor: "#fff"
+    })
+  ];
+  gaming.blocks = [
+    new Block("8pm-11pm", "Video Gaming", 3, 6, "/mff2009/block/4")
+  ];
+  schedule.render();
 </script>
 </body>
 </html>

@@ -1,0 +1,6 @@
+JSScheduler
+(c) 2011 Jeff Bowman and contributors.
+Released under the Apache License 2.0.
+
+JSScheduler is a JQuery-targeted Javascript library, which displays scheduled events
+in a readable and navigable grid format.
